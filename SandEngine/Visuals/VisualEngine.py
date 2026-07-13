@@ -1,11 +1,15 @@
 # VISUAL ENGINE DRAWS SOME SHIT ON SCREEN
 #importing for you honey ~
 from SandEngine.Libs import *
-import os
-import json
+from SandEngine.DATA.TMP import *
 
 #camera
 camera = pr.Camera2D()
+
+camera.target = pr.Vector2(0, 0)
+camera.offset = pr.Vector2(0, 0)
+camera.rotation = 0.0
+camera.zoom = 1.0
 
 # ===== MAP =====
 MAP_W = 256
@@ -25,7 +29,6 @@ def load_map():
 
         world = [[0 for x in range(MAP_W)] for y in range(MAP_H)]
 
-        # тестова земля
         for y in range(MAP_H // 2, MAP_H):
             for x in range(MAP_W):
                 world[y][x] = 1
@@ -75,7 +78,7 @@ def draw_map():
             )
 
 
-# ===== WORLD EDIT =====
+# WORLD EDIT
 
 def world_set(x, y, material=1):
     global world
@@ -113,6 +116,12 @@ def world_clear(x, y, w, h):
     world_fill(x, y, w, h, 0)
 
 
+#its "UI" my honey
+def draw_ui():
+    mouse = pr.get_mouse_position()
+    world_mouse = pr.get_screen_to_world_2d(mouse, camera)
+    pr.draw_circle_lines(int(world_mouse.x), int(world_mouse.y), TMP_cursor_scale * 10, pr.RED)
+
 # drawer function
 def visuals_root():
     global camera
@@ -120,9 +129,9 @@ def visuals_root():
     pr.begin_drawing()
     pr.begin_mode_2d(camera)
 
-    pr.clear_background(pr.DARKGRAY)
-
+    pr.clear_background(pr.BLACK)
     draw_map()
+    draw_ui()
 
     pr.end_mode_2d()
     pr.end_drawing()
