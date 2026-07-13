@@ -40,3 +40,15 @@ def handle_controls():
         Curent_material = 3
     if pr.is_key_pressed(pr.KeyboardKey.KEY_THREE):
         Curent_material = 4
+
+def handle_ui_buttons():
+    global Curent_material
+    if pr.gui_button(
+        pr.Rectangle(300, 250, 200, 60),"sand"):
+        Curent_material = 2
+    if pr.gui_button(
+        pr.Rectangle(300, 350, 200, 60),"Water"):
+        Curent_material = 3
+    if pr.gui_button(
+        pr.Rectangle(300, 450, 200, 60),"Wall"):
+        Curent_material = 4

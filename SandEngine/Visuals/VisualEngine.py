@@ -140,8 +140,6 @@ def get_wheel_rotation():
     return TMP_cursor_scale
 #its "UI" my honey
 def draw_ui():
-
-
     mouse = pr.get_mouse_position()
     world_mouse = pr.get_screen_to_world_2d(mouse, camera)
 
@@ -156,8 +154,6 @@ def draw_ui():
 # drawer function
 def visuals_root():
     global camera
-
-    pr.begin_drawing()
     pr.begin_mode_2d(camera)
 
     pr.clear_background(pr.BLACK)
@@ -165,4 +161,4 @@ def visuals_root():
     draw_ui()
 
     pr.end_mode_2d()
-    pr.end_drawing()
+
