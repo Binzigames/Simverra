@@ -68,29 +68,49 @@ def update_sand(world, x, y):
 
 def update_water(world, x, y):
 
-    # falling
-    if world[y + 1][x] == AIR:
-
+    # вниз
+    if inside(x, y + 1) and world[y + 1][x] == AIR:
         swap(world, x, y, x, y + 1)
         return
 
-
-
-    # spreading
     direction = -1 if randint(0, 1) else 1
 
-
+    # діагональ вниз
     for dx in (direction, -direction):
 
         nx = x + dx
 
-        if inside(nx, y):
+        if inside(nx, y + 1) and world[y + 1][nx] == AIR:
+            swap(world, x, y, nx, y + 1)
+            return
 
-            if world[y][nx] == AIR:
+    # шукати шлях убік
+    MAX_FLOW = 2
 
+    for dx in (direction, -direction):
+
+        for dist in range(1, MAX_FLOW + 1):
+
+            nx = x + dx * dist
+
+            if not inside(nx, y):
+                break
+
+            # стіна
+            if world[y][nx] != AIR:
+                break
+
+            # знайшли місце, де можна впасти
+            if inside(nx, y + 1) and world[y + 1][nx] == AIR:
                 swap(world, x, y, nx, y)
                 return
 
+        # якщо просто є вільне місце поруч
+        nx = x + dx
+
+        if inside(nx, y) and world[y][nx] == AIR:
+            swap(world, x, y, nx, y)
+            return
 
 
 # ===== MAIN UPDATE =====
