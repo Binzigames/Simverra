@@ -115,25 +115,29 @@ def world_fill(x, y, w, h, material=1):
 def world_clear(x, y, w, h):
     world_fill(x, y, w, h, 0)
 
+def get_wheel_rotation():
+    global TMP_cursor_scale
+    wheel = pr.get_mouse_wheel_move()
+    if wheel != 0:
+        TMP_cursor_scale += wheel * 0.5
 
+    TMP_cursor_scale = max(0.1, min(TMP_cursor_scale, 20.0))
+
+    return TMP_cursor_scale
 #its "UI" my honey
 def draw_ui():
-    global TMP_cursor_scale
-    #ui logic
-    wheel = pr.get_mouse_wheel_move()
+
+
     mouse = pr.get_mouse_position()
     world_mouse = pr.get_screen_to_world_2d(mouse, camera)
 
-    if wheel != 0:
-        TMP_cursor_scale += wheel * 0.1
-        if TMP_cursor_scale < 0.1:
-            TMP_cursor_scale = 0.1
-
-        if TMP_cursor_scale > 20:
-            TMP_cursor_scale = 20
-
-    #ui_draw
-    pr.draw_circle_lines(int(world_mouse.x), int(world_mouse.y), TMP_cursor_scale * 10, pr.RAYWHITE)
+    pr.draw_circle_lines(
+        int(world_mouse.x),
+        int(world_mouse.y),
+        get_wheel_rotation() * 5,
+        pr.RAYWHITE
+    )
+    print(get_wheel_rotation())
 
 
 # drawer function

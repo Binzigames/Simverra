@@ -4,20 +4,24 @@ from SandEngine.Libs import *
 from SandEngine.DATA.TMP import *
 from SandEngine.Visuals.VisualEngine import *
 
-mouse = pr.get_mouse_position()
-world_mouse = pr.get_screen_to_world_2d(mouse, camera)
+Curent_material = 2
 
-# Controls
 def handle_controls():
-    global TMP_cursor_scale
-    wheel = pr.get_mouse_wheel_move()
+    global Curent_material
+    mouse = pr.get_mouse_position()
+    world_mouse = pr.get_screen_to_world_2d(mouse, camera)
 
-    if wheel != 0:
-        TMP_cursor_scale += int(wheel +1)
-        print(TMP_cursor_scale)
+    X = int(world_mouse.x // 4)
+    Y = int(world_mouse.y // 4)
 
-        if TMP_cursor_scale < 0.1:
-            TMP_cursor_scale = 0.1
+    if pr.is_mouse_button_down(pr.MouseButton.MOUSE_BUTTON_LEFT):
 
-        if TMP_cursor_scale > 20:
-            TMP_cursor_scale = 20
+        radius = int(get_wheel_rotation())
+
+        for x in range(-radius, radius + 1):
+            for y in range(-radius, radius + 1):
+
+                if x*x + y*y <= radius*radius:
+                    world_set(X + x, Y + y, Curent_material)
+
+        print(f"painted area at {X}, {Y} with scale {int(get_wheel_rotation())}")
