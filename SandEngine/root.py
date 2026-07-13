@@ -1,9 +1,10 @@
 #IMPORTING SASSY LIBS
 from SandEngine.Libs import *
+from SandEngine.Visuals.VisualEngine import visuals_root
 
 # root functions
 def visuals():
-    pass
+    visuals_root()
 def ui():
     pass
 def physics():
