@@ -16,7 +16,7 @@ def handle_controls():
 
     if pr.is_mouse_button_down(pr.MouseButton.MOUSE_BUTTON_LEFT):
 
-        radius = TMP_cursor_scale
+        radius = int(get_wheel_rotation())
 
         for x in range(-radius, radius + 1):
             for y in range(-radius, radius + 1):
@@ -24,4 +24,4 @@ def handle_controls():
                 if x*x + y*y <= radius*radius:
                     world_set(X + x, Y + y, Curent_material)
 
-        print(f"painted area at {X}, {Y} with scale {TMP_cursor_scale}")
+        print(f"painted area at {X}, {Y} with scale {int(get_wheel_rotation())}")
