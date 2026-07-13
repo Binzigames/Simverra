@@ -1,15 +1,15 @@
 #IMPORTING SASSY LIBS
 from SandEngine.Libs import *
+from SandEngine.Visuals.VisualEngine import visuals_root
+from SandEngine.LogicsEngine import handle_controls
 
 # root functions
 def visuals():
-    pass
-def ui():
-    pass
+    visuals_root()
 def physics():
     pass
 def logics():
-    pass
+    handle_controls()
 def exit():
     pr.close_window()
     sys.exit()
@@ -26,5 +26,4 @@ def init_root():
 def root():
     physics()
     logics()
-    ui()
     visuals()
