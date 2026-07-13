@@ -1,6 +1,7 @@
 #IMPORTING SASSY LIBS
 from SandEngine.Libs import *
-from SandEngine.Visuals.VisualEngine import visuals_root , draw_ui
+from SandEngine.Visuals.VisualEngine import visuals_root
+from SandEngine.LogicsEngine import handle_controls
 
 # root functions
 def visuals():
@@ -8,7 +9,7 @@ def visuals():
 def physics():
     pass
 def logics():
-    pass
+    handle_controls()
 def exit():
     pr.close_window()
     sys.exit()
