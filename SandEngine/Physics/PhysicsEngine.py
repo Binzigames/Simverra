@@ -259,26 +259,21 @@ def update_water(world,x,y):
 
 
 # ===== MAIN UPDATE =====
-
+MAX_MATERIAL_UPDATES = 3000
 def update_materials(world):
-
     global active_cells
 
 
-    # додаємо нові активні клітини
-
-    new_active = set(active_cells)
-
-    active_cells.clear()
+    count = 0
 
 
+    for x,y in list(active_cells):
 
-    for x,y in new_active:
+        active_cells.remove((x,y))
 
 
         if not inside(x,y):
             continue
-
 
 
         tile = world[y][x]
@@ -286,21 +281,19 @@ def update_materials(world):
 
         if tile == SAND or tile == GRAVIY:
 
-            update_sand(
-                world,
-                x,
-                y
-            )
+            update_sand(world,x,y)
 
 
         elif tile == WATER:
 
-            update_water(
-                world,
-                x,
-                y
-            )
+            update_water(world,x,y)
 
+
+        count += 1
+
+
+        if count >= MAX_MATERIAL_UPDATES:
+            break
 
 
 # ===== INITIALIZE MATERIAL =====

@@ -147,6 +147,52 @@ def update_cell_texture(x, y):
         map_image.data
     )
 
+def update_dirty_texture():
+
+    cells = get_dirty_cells()
+
+    if not cells:
+        return
+
+
+    for x, y in cells:
+
+        cell = world[y][x]
+
+        color = pr.BLANK
+
+
+        if cell == 2:
+            color = M_Sand(pr.BROWN, x, y)
+
+        elif cell == 3:
+            color = M_Water(pr.BLUE, x, y, world)
+
+        elif cell == 4:
+            color = M_Wall(pr.GRAY, x, y)
+
+        elif cell == 5:
+            color = M_graviy(pr.GRAY, x, y)
+
+
+
+        for py in range(PIXEL_SIZE):
+
+            for px in range(PIXEL_SIZE):
+
+                pr.image_draw_pixel(
+                    map_image,
+                    x * PIXEL_SIZE + px,
+                    y * PIXEL_SIZE + py,
+                    color
+                )
+
+
+    pr.update_texture(
+        map_texture,
+        map_image.data
+    )
+
 
 def draw_map():
     global map_texture
@@ -581,8 +627,8 @@ def visuals_root():
         world,
         objects[0]
     ) if objects else None
-    for x, y in get_dirty_cells():
-        update_cell_texture(x, y)
+
+    update_dirty_texture()
 
 
     pr.begin_mode_2d(camera)
