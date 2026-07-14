@@ -25,6 +25,17 @@ def M_sand(color, x, y):
     )
 
 
+def M_graviy(color, x, y):
+    nois = noise()
+
+    return pr.Color(
+        100 + nois,
+        100 + nois,
+        100 + nois // 2,
+        255
+    )
+
+
 def M_Water(color, x, y, world):
     if y > 0 and world[y-1][x] != 3:
         return pr.Color(180, 240, 255, 255)

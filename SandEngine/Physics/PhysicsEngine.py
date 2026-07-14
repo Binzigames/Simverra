@@ -10,7 +10,7 @@ AIR = 0
 SAND = 2
 WATER = 3
 STONE = 4
-
+GRAVIY = 5
 
 # ===== MAP SIZE =====
 
@@ -141,3 +141,6 @@ def update_materials(world):
             elif tile == WATER:
 
                 update_water(world, x, y)
+
+            elif tile == GRAVIY:
+                update_sand(world, x, y)

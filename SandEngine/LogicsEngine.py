@@ -122,6 +122,18 @@ def handle_ui_buttons():
             "[3] WALL",
             4,
             pr.Color(120,120,120,255)
+        ),
+
+        (
+            pr.Rectangle(
+                50 + (button_width + spacing) * 3,
+                y,
+                button_width,
+                button_height,
+            ),
+            "[4] GRAVIY",
+            5,
+            pr.Color(100, 100, 100, 255)
         )
     ]
 
