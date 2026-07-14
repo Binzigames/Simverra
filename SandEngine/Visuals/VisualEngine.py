@@ -135,8 +135,14 @@ def get_wheel_rotation():
     if wheel != 0:
         TMP_cursor_scale += wheel * 0.5
 
-    TMP_cursor_scale = max(0.1, min(TMP_cursor_scale, 20.0))
+    # Artem: My scroll bar is broken. It's will be pain if don't add keys :(
+    if pr.is_key_pressed(pr.KeyboardKey.KEY_KP_ADD):
+        TMP_cursor_scale += 0.5
+    elif pr.is_key_pressed(pr.KeyboardKey.KEY_KP_SUBTRACT):
+        TMP_cursor_scale -= 0.5
 
+    TMP_cursor_scale = max(0.1, min(TMP_cursor_scale, 20.0))
+    
     return TMP_cursor_scale
 #its "UI" my honey
 Welcome_screen_shown = False
