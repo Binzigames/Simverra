@@ -67,11 +67,11 @@ def draw_map():
             color = pr.BROWN
 
             if cell == 2:
-                color = M_sand(color)
+                color = M_sand(color , x , y)
             elif cell == 3:
-                color = M_Water(color)
+                color = M_Water(color, x , y ,get_world())
             elif cell == 4:
-                color = M_Wall(color)
+                color = M_Wall(color, x , y)
 
             pr.draw_rectangle(
                 x * PIXEL_SIZE,
