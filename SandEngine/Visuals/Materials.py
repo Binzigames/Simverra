@@ -51,3 +51,17 @@ def M_Wall(color, x, y):
     base = clamp(120 + n)
 
     return pr.Color(base, base, base, 255)
+
+# =========================
+# GRAVIY
+# =========================
+def M_graviy(color, x, y):
+    nois = tex_noise(x, y)
+
+    return pr.Color(
+        100 + nois,
+        100 + nois,
+        100 + nois // 2,
+        255
+    )
+
