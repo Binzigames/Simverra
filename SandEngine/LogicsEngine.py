@@ -15,7 +15,7 @@ def handle_controls():
     X = int(world_mouse.x // 4)
     Y = int(world_mouse.y // 4)
     radius = int(get_wheel_rotation())
-
+    
     if pr.is_mouse_button_down(pr.MouseButton.MOUSE_BUTTON_LEFT):
         for x in range(-radius, radius + 1):
             for y in range(-radius, radius + 1):
