@@ -255,7 +255,117 @@ def update_water(world,x,y):
 
             return
 
+# ===== OBJECT INTERACTION =====
 
+OBJECT_PUSH_POWER = 2
+
+
+def object_inside_cells(obj):
+
+    left = int(obj.x / 4)
+    right = int((obj.x + obj.w) / 4)
+
+    top = int(obj.y / 4)
+    bottom = int((obj.y + obj.h) / 4)
+
+    return left, right, top, bottom
+
+
+
+def push_object_materials(world, obj):
+
+    left, right, top, bottom = object_inside_cells(obj)
+
+
+    for y in range(bottom, top-1, -1):
+
+        for x in range(left, right+1):
+
+            if not inside(x,y):
+                continue
+
+
+            tile = world[y][x]
+
+
+            # =================
+            # SAND PUSH
+            # =================
+
+            if tile == SAND:
+
+                # пісок падає вниз
+                if inside(x,y+1):
+
+                    if world[y+1][x] == AIR:
+
+                        move_cell(
+                            world,
+                            x,y,
+                            x,y+1
+                        )
+
+
+                    elif world[y+1][x] == WATER:
+
+                        world[y+1][x] = SAND
+                        world[y][x] = WATER
+
+                        mark_dirty(x,y)
+                        mark_dirty(x,y+1)
+
+
+
+            # =================
+            # WATER PUSH
+            # =================
+
+            elif tile == WATER:
+
+
+                # вода тікає в сторони
+
+                dirs = [-1,1]
+
+
+                random.shuffle(dirs)
+
+
+                for dx in dirs:
+
+                    nx=x+dx
+
+
+                    if inside(nx,y):
+
+                        if world[y][nx] == AIR:
+
+                            move_cell(
+                                world,
+                                x,y,
+                                nx,y
+                            )
+
+                            break
+
+
+
+            # =================
+            # GRAVITY MATERIAL
+            # =================
+
+            elif tile == GRAVIY:
+
+
+                if inside(x,y+1):
+
+                    if world[y+1][x] == AIR:
+
+                        move_cell(
+                            world,
+                            x,y,
+                            x,y+1
+                        )
 
 
 # ===== MAIN UPDATE =====

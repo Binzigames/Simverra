@@ -626,10 +626,7 @@ def visuals_root():
         dt
     )
 
-    push_material(
-        world,
-        objects[0]
-    ) if objects else None
+
 
     update_dirty_texture()
 
