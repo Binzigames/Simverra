@@ -111,10 +111,16 @@ def move_x(world,obj,amount):
         return
 
 
-    step = 1 if amount > 0 else -1
+    move = int(amount)
+
+    if move == 0:
+        return
 
 
-    for i in range(abs(int(amount))):
+    step = 1 if move > 0 else -1
+
+
+    for _ in range(abs(move)):
 
         obj.x += step
 
@@ -135,17 +141,22 @@ def move_x(world,obj,amount):
 
 
 
-
 def move_y(world,obj,amount):
 
     if amount == 0:
         return
 
 
-    step = 1 if amount > 0 else -1
+    move = int(amount)
+
+    if move == 0:
+        return
 
 
-    for i in range(abs(int(amount))):
+    step = 1 if move > 0 else -1
+
+
+    for _ in range(abs(move)):
 
         obj.y += step
 
@@ -159,6 +170,20 @@ def move_y(world,obj,amount):
         ):
 
             obj.y -= step
+
+
+            if step > 0:
+
+                while rect_solid(
+                    world,
+                    obj.x,
+                    obj.y,
+                    obj.w,
+                    obj.h
+                ):
+                    obj.y -= 1
+
+
             obj.vy = 0
             break
 
@@ -188,23 +213,7 @@ def update_objects(world,dt):
 
 
     for obj in objects:
-
-
-        # gravity
-
         obj.vy += GRAVITY * dt
-
-
-
-
-        push_object_materials(
-            world,
-            obj,
-            objects
-        )
-
-
-
 
         move_x(
             world,
@@ -212,11 +221,16 @@ def update_objects(world,dt):
             obj.vx * dt
         )
 
-
         move_y(
             world,
             obj,
             obj.vy * dt
+        )
+
+        push_object_materials(
+            world,
+            obj,
+            objects
         )
 
 
