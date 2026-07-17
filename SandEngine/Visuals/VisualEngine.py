@@ -404,13 +404,9 @@ def draw_ui():
             230
         )
 
-        pr.draw_rectangle_rec(panel, pr.Color(15, 18, 15, 255))
+        pr.draw_rectangle_rounded(panel, 0.1, 3,pr.Color(15, 18, 15, 255))
 
-        pr.draw_rectangle_lines_ex(
-            panel,
-            2,
-            pr.GREEN
-        )
+        pr.draw_rectangle_rounded_lines_ex(panel, 0.1, 3, 2, pr.GREEN)
 
         pr.draw_rectangle(
             int(panel.x),
@@ -460,8 +456,8 @@ def draw_ui():
 
         panel = pr.Rectangle(15, 15, 300, 90)
 
-        pr.draw_rectangle_rec(panel, pr.Color(15, 15, 15, 220))
-        pr.draw_rectangle_lines_ex(panel, 2, pr.GREEN)
+        pr.draw_rectangle_rounded(panel, 0.1, 3, pr.Color(15, 15, 15, 220))
+        pr.draw_rectangle_rounded_lines_ex(panel, 0.1, 3, 2, pr.GREEN)
 
         pr.draw_text(
             "SIMULATED BOX v1.0",
@@ -490,11 +486,10 @@ def draw_ui():
 
         # OBJECT MODE BUTTON
 
-        pr.draw_rectangle(
-            20,
-            120,
-            170,
-            35,
+        pr.draw_rectangle_rounded(
+            pr.Rectangle(20, 120, 170, 35),
+            0.2,
+            3,
             pr.DARKGREEN
         )
 
