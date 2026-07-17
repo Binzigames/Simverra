@@ -259,3 +259,4 @@ def handle_ui_buttons():
         pr.MouseButton.MOUSE_BUTTON_LEFT
     ):
         load_map()
+        create_map_texture()

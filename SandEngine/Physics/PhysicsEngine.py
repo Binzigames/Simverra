@@ -173,7 +173,7 @@ def update_water(world,x,y):
 
 
 
-    # вниз
+
 
     if y+1 < MAP_H:
 
@@ -198,7 +198,7 @@ def update_water(world,x,y):
 
 
 
-    # діагональ
+
 
     for dx in (direction,-direction):
 
@@ -219,8 +219,6 @@ def update_water(world,x,y):
                 return
 
 
-
-    # горизонтальна течія
 
     FLOW = 3
 
@@ -276,97 +274,95 @@ def push_object_materials(world, obj):
 
     left, right, top, bottom = object_inside_cells(obj)
 
+    water = 0
+    cells = 0
+    support = False
 
-    for y in range(bottom, top-1, -1):
+    for y in range(bottom, top - 1, -1):
+        for x in range(left, right + 1):
 
-        for x in range(left, right+1):
-
-            if not inside(x,y):
+            if not inside(x, y):
                 continue
-
 
             tile = world[y][x]
 
-
-            # =================
-            # SAND PUSH
-            # =================
-
             if tile == SAND:
 
-                # пісок падає вниз
-                if inside(x,y+1):
+                if inside(x, y + 1):
 
-                    if world[y+1][x] == AIR:
+                    if world[y + 1][x] == AIR:
+                        move_cell(world, x, y, x, y + 1)
 
-                        move_cell(
-                            world,
-                            x,y,
-                            x,y+1
-                        )
-
-
-                    elif world[y+1][x] == WATER:
-
-                        world[y+1][x] = SAND
+                    elif world[y + 1][x] == WATER:
+                        world[y + 1][x] = SAND
                         world[y][x] = WATER
-
-                        mark_dirty(x,y)
-                        mark_dirty(x,y+1)
-
-
-
-            # =================
-            # WATER PUSH
-            # =================
+                        mark_dirty(x, y)
+                        mark_dirty(x, y + 1)
 
             elif tile == WATER:
 
-
-                # вода тікає в сторони
-
-                dirs = [-1,1]
-
-
+                dirs = [-1, 1]
                 random.shuffle(dirs)
-
 
                 for dx in dirs:
 
-                    nx=x+dx
+                    nx = x + dx
 
-
-                    if inside(nx,y):
-
-                        if world[y][nx] == AIR:
-
-                            move_cell(
-                                world,
-                                x,y,
-                                nx,y
-                            )
-
-                            break
-
-
-
-            # =================
-            # GRAVITY MATERIAL
-            # =================
+                    if inside(nx, y) and world[y][nx] == AIR:
+                        move_cell(world, x, y, nx, y)
+                        break
 
             elif tile == GRAVIY:
 
+                if inside(x, y + 1):
 
-                if inside(x,y+1):
+                    if world[y + 1][x] == AIR:
+                        move_cell(world, x, y, x, y + 1)
 
-                    if world[y+1][x] == AIR:
 
-                        move_cell(
-                            world,
-                            x,y,
-                            x,y+1
-                        )
+    check = bottom + 1
 
+    if check < MAP_H:
+
+        for x in range(left, right + 1):
+
+            if inside(x, check):
+
+                if world[check][x] in (SAND, STONE, GRAVIY):
+                    support = True
+                    break
+
+
+    for y in range(top, bottom + 1):
+        for x in range(left, right + 1):
+
+            if not inside(x, y):
+                continue
+
+            cells += 1
+
+            if world[y][x] == WATER:
+                water += 1
+
+    ratio = water / max(cells, 1)
+
+
+
+    if support and obj.vy >= 0:
+
+        obj.vy = 0
+
+        obj.y = check * 4 - obj.h
+
+
+    if ratio > 0:
+
+        obj.vy -= ratio * 0.6
+
+        obj.vx += random.uniform(-0.03, 0.03)
+
+        if ratio > 0.8:
+            obj.vy *= 0.9
 
 # ===== MAIN UPDATE =====
 MAX_MATERIAL_UPDATES = 3000

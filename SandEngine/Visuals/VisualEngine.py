@@ -35,7 +35,7 @@ def load_map():
 
         for y in range(MAP_H // 2, MAP_H):
             for x in range(MAP_W):
-                world[y][x] = 1
+                world[y][x] = 4
 
         save_map()
         print_message("Loading map...", 0)

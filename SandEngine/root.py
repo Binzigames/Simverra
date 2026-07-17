@@ -24,7 +24,7 @@ def exit():
 # root
 
 def init_root():
-    pr.init_window( 900 , 800 , "SandBoxProject")
+    pr.init_window( 1000 , 800 , "SandBoxProject")
     print_init()
     pr.set_target_fps(60)
     while not pr.window_should_close():
