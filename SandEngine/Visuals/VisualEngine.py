@@ -326,8 +326,7 @@ def ui_text(text, x, y, size=32, color=UI_C_TEXT, spacing=1):
     )
 
 #buttons
-#remove colors when rewrite ui
-def Button(rect, text,color , t_color , action=None):
+def Button(rect, text , action=None):
     global is_hovered
 
     mouse = pr.get_mouse_position()
@@ -632,8 +631,6 @@ def draw_ui():
         Button(
             pr.Rectangle(20, 120, 170, 35),
             "OBJECT MODE",
-            pr.DARKGREEN,
-            pr.WHITE,
             toggle_object_mode
         )
 

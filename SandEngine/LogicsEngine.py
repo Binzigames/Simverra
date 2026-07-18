@@ -192,8 +192,6 @@ def handle_ui_buttons():
         Button(
             rect,
             text,
-            color,
-            text_color,
             action
         )
 
@@ -213,6 +211,4 @@ def handle_ui_buttons():
         reset_rect,
         "RESET MAP",
         pr.Color(10,5,5,255),
-        pr.RED,
-        reset_map
     )
