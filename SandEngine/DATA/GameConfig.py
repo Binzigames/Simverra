@@ -13,7 +13,7 @@ w_y = 800
 w_title = "Simverra 1.0"
 
 #debuger
-d_show_logs = True
+d_show_logs = False
 
 #=====================
 #VISUAL ENGINE

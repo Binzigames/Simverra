@@ -4,3 +4,4 @@ SandEngine/DATA/__pycache__
 SandEngine/Physics/__pycache__
 SandEngine/Visuals/__pycache__
 SandEngine/DATA/map.json
+/Assets/__pycache__
