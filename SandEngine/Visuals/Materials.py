@@ -61,4 +61,37 @@ def M_graviy(color, x, y):
         100 + nois // 2,
         255
     )
+# =========================
+# BACKGROUND
+# =========================
+def M_Background():
+    pr.clear_background(pr.Color(35, 35, 40, 255))
+    #gradient
+    width = pr.get_screen_width()
+    height = pr.get_screen_height()
 
+    top = pr.Color(45, 45, 50, 255)
+    bottom = pr.Color(25, 25, 30, 255)
+
+    for y in range(height):
+        t = y / height
+
+        r = int(top.r * (1 - t) + bottom.r * t)
+        g = int(top.g * (1 - t) + bottom.g * t)
+        b = int(top.b * (1 - t) + bottom.b * t)
+
+        pr.draw_line(
+            0,
+            y,
+            width,
+            y,
+            pr.Color(r, g, b, 255)
+        )
+    #grid
+    grid_color = pr.Color(55, 55, 60, 80)
+
+    for x in range(0, pr.get_screen_width(), 50):
+        pr.draw_line(x, 0, x, pr.get_screen_height(), grid_color)
+
+    for y in range(0, pr.get_screen_height(), 50):
+        pr.draw_line(0, y, pr.get_screen_width(), y, grid_color)

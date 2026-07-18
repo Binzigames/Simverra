@@ -607,7 +607,7 @@ def visuals_root():
     pr.begin_mode_2d(camera)
 
 
-    pr.clear_background(pr.BLACK)
+    M_Background()
 
 
     draw_map()
