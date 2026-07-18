@@ -4,7 +4,15 @@ from SandEngine.Libs import *
 #=====================
 #FONTS
 #=====================
-F_MAIN_FONT = pr.load_font("Assets/Inter.ttf")
+FONT = None
+
+def get_font():
+    global FONT
+
+    if FONT is None:
+        FONT = pr.load_font("Assets/Inter.ttf")
+
+    return FONT
 #=====================
 #SHADERS
 #=====================

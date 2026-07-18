@@ -6,6 +6,13 @@ from SandEngine.Libs import *
 #SAND ENGINE
 #=====================
 
+#ui_colors
+UI_C_MAIN = pr.Color(225,225,225)
+UI_C_SECONDARY = pr.Color(225, 225, 225)
+UI_C_BG = pr.Color(225, 225, 225)
+UI_C_TEXT = pr.Color(225, 225, 225)
+
+
 #window
 w_fps_lock = 60
 w_x = 1000

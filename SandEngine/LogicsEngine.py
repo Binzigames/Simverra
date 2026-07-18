@@ -40,7 +40,7 @@ def handle_controls():
                 wx = X + xx
                 wy = Y + yy
 
-                if left:
+                if left and not get_mouse_hovery():
                     world_set(wx, wy, Curent_material)
                 else:
                     world_set(wx, wy, 0)
@@ -69,15 +69,44 @@ def handle_controls():
 #=====================
 # down-screen menu
 #=====================
+def select_sand():
+    global Curent_material
+    Curent_material = 2
+
+
+def select_water():
+    global Curent_material
+    Curent_material = 3
+
+
+def select_wall():
+    global Curent_material
+    Curent_material = 4
+
+
+def select_gravity():
+    global Curent_material
+    Curent_material = 5
+
+
+def reset_map():
+    global world
+
+    world = load_map_return()
+    activate_world(world)
+    create_map_texture()
+    clear_all_objects()
+
+
 
 def handle_ui_buttons():
-    global Curent_material , world
 
     button_width = 150
     button_height = 45
     spacing = 15
 
     panel_height = 75
+
 
     panel = pr.Rectangle(
         20,
@@ -86,38 +115,33 @@ def handle_ui_buttons():
         panel_height
     )
 
-    # background
-    pr.draw_rectangle_rec(
-        panel,
-        pr.Color(10, 15, 10, 230)
-    )
 
-    # border
-    pr.draw_rectangle_lines_ex(
+    # PANEL
+    panel_ui(
         panel,
-        2,
-        pr.GREEN
-    )
-
-    # title
-    pr.draw_text(
-        " MATERIAL SELECT >",
-        int(panel.x + 15),
-        int(panel.y + 8),
-        18,
-        pr.GREEN
+        " MATERIAL SELECT >"
     )
 
 
     y = panel.y + 28
 
+
+
     buttons = [
+
         (
-            pr.Rectangle(50, y, button_width, button_height),
+            pr.Rectangle(
+                50,
+                y,
+                button_width,
+                button_height
+            ),
             "[1] SAND",
-            2,
-            pr.Color(210,180,70,255)
+            pr.Color(210,180,70,255),
+            pr.Color(20,20,20,255),
+            select_sand
         ),
+
 
         (
             pr.Rectangle(
@@ -127,146 +151,68 @@ def handle_ui_buttons():
                 button_height
             ),
             "[2] WATER",
-            3,
-            pr.Color(50,140,220,255)
+            pr.Color(50,140,220,255),
+            pr.Color(20,20,20,255),
+            select_water
         ),
+
 
         (
             pr.Rectangle(
-                50 + (button_width + spacing)*2,
+                50 + (button_width + spacing) * 2,
                 y,
                 button_width,
                 button_height
             ),
             "[3] WALL",
-            4,
-            pr.Color(120,120,120,255)
+            pr.Color(120,120,120,255),
+            pr.Color(20,20,20,255),
+            select_wall
         ),
+
 
         (
             pr.Rectangle(
                 50 + (button_width + spacing) * 3,
                 y,
                 button_width,
-                button_height,
+                button_height
             ),
-            "[4] GRAVIY",
-            5,
-            pr.Color(100, 100, 100, 255)
+            "[4] GRAVITY",
+            pr.Color(100,100,100,255),
+            pr.Color(20,20,20,255),
+            select_gravity
         )
+
     ]
 
 
-    mouse = pr.get_mouse_position()
+    for rect, text, color, text_color, action in buttons:
 
-
-    for rect, text, material, color in buttons:
-
-        hovered = pr.check_collision_point_rec(
-            mouse,
-            rect
-        )
-
-
-        # button background
-        if hovered:
-            color = pr.Color(
-                min(color.r+40,255),
-                min(color.g+40,255),
-                min(color.b+40,255),
-                255
-            )
-
-
-        pr.draw_rectangle_rec(
+        Button(
             rect,
-            pr.Color(
-                5,
-                5,
-                5,
-                255
-            )
-        )
-
-
-        pr.draw_rectangle_lines_ex(
-            rect,
-            2,
-            color
-        )
-
-
-        pr.draw_text(
             text,
-            int(rect.x + 12),
-            int(rect.y + 12),
-            18,
-            color
+            color,
+            text_color,
+            action
         )
-
-
-        if hovered and pr.is_mouse_button_pressed(
-            pr.MouseButton.MOUSE_BUTTON_LEFT
-        ):
-            Curent_material = material
 
 
 
     # RESET BUTTON
 
     reset_rect = pr.Rectangle(
-        pr.get_screen_width()-230,
+        pr.get_screen_width() - 230,
         y,
         200,
         button_height
     )
 
 
-    hovered = pr.check_collision_point_rec(
-        mouse,
-        reset_rect
-    )
-
-
-    reset_color = pr.RED
-
-    if hovered:
-        reset_color = pr.Color(
-            255,
-            80,
-            80,
-            255
-        )
-
-
-    pr.draw_rectangle_rec(
+    Button(
         reset_rect,
-        pr.Color(10,5,5,255)
-    )
-
-
-    pr.draw_rectangle_lines_ex(
-        reset_rect,
-        2,
-        reset_color
-    )
-
-
-    pr.draw_text(
         "RESET MAP",
-        int(reset_rect.x+18),
-        int(reset_rect.y+12),
-        18,
-        reset_color
+        pr.Color(10,5,5,255),
+        pr.RED,
+        reset_map
     )
-
-
-    if hovered and pr.is_mouse_button_pressed(
-        pr.MouseButton.MOUSE_BUTTON_LEFT
-    ):
-
-        world =  load_map_return()
-        activate_world(world)
-        create_map_texture()
-        clear_all_objects()
-
