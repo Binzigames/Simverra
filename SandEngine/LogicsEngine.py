@@ -6,7 +6,7 @@ from SandEngine.Visuals.VisualEngine import *
 from SandEngine.Physics.objects import *
 from SandEngine.Debuger import *
 from SandEngine.DATA.GameConfig import *
-
+from SandEngine.Audio.AudioEngine import *
 
 
 #=====================
@@ -44,9 +44,11 @@ def handle_controls():
 
                 if left and not get_mouse_hovery():
                     world_set(wx, wy, Curent_material)
+                    play_sound(2)
                 else:
                     if not get_mouse_hovery():
                         world_set(wx, wy, 0)
+
 
     if pr.is_key_pressed(pr.KeyboardKey.KEY_ONE):
         Curent_material = 2

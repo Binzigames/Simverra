@@ -30,9 +30,9 @@ d_show_logs = False
 
 # loading screen
 loading_texts = [
-    "The night is young, the stars are watching",
-    "Lost somewhere between dreams and reality",
-    "Creating a world you will remember",
+    "Change now its time for change, nothing stays the same",
+    "Losing my religion , trying to keep up with you",
+    "All my life, i fight to survive",
     "The silence before the adventure begins",
     "Chasing shadows, building memories",
     "Somewhere far away, a story is waiting",
@@ -118,3 +118,8 @@ objects = []
 GRAVITY = 600
 
 
+#=====================
+#AUDIO ENGINE
+#=====================
+Music_Loudnes = 0.2
+SFX_Loudnes = 0.1

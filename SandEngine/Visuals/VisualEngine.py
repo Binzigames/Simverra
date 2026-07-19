@@ -1,7 +1,5 @@
 # VISUAL ENGINE DRAWS SOME SHIT ON SCREEN
 #importing for you honey ~
-import time
-
 from SandEngine.Libs import *
 from SandEngine.DATA.TMP import *
 from SandEngine.Debuger import *
@@ -10,6 +8,7 @@ from SandEngine.Physics.objects import *
 from SandEngine.Physics.PhysicsEngine import *
 from SandEngine.DATA.GameConfig import *
 from Assets.Assets_importer import *
+from SandEngine.Audio.AudioEngine import *
 
 #=====================
 #camera
@@ -307,7 +306,7 @@ def get_wheel_rotation():
         TMP_cursor_scale -= 0.5
 
     TMP_cursor_scale = max(0.1, min(TMP_cursor_scale, 20.0))
-    
+
     return TMP_cursor_scale
 
 
@@ -435,6 +434,7 @@ def Button(rect, text, action=None):
         ):
 
             if action:
+                play_sound(1)
                 action()
 
 def object_select_button(name, x, y):
@@ -909,6 +909,7 @@ def draw_ui():
             )
 
             objects.append(obj)
+            play_sound(1)
 
     # ==========================
     # DEBUG TOGGLE
@@ -925,9 +926,7 @@ def draw_ui():
 #=====================
 def draw_loading_screen():
     M_Background()
-    quote = loading_texts[
-        int((pr.get_time() // 3000) % len(loading_texts))
-    ]
+    quote = random.choice(loading_texts)
     sw = pr.get_screen_width()
     sh = pr.get_screen_height()
 
