@@ -118,12 +118,19 @@ Simverra/
 # Building
 
 ```bash
-git clone https://github.com/YourName/Simverra.git
+git clone https://github.com/Binzigames/Simverra.git
 
 cd Simverra
 
-# Build with Visual Studio / CMake
 ```
+next step do in your ide (recomended : Pycharm / )
+
+then:
+
+```
+pip install raylib pyray colorama pypresence
+```
+
 
 ---
 
