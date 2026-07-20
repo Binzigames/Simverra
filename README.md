@@ -1,21 +1,15 @@
 <div align="center">
 
-# 🌍 Simverra
 
-### A Physics-Based Sandbox Made Just for You
-
-Build • Experiment • Destroy • Create
 
 <!-- Banner -->
 <p align="center">
   <img src="Assets/Images/banner.png" alt="Simverra Banner" width="100%">
 </p>
 
-<!-- GIF Preview -->
-<p align="center">
-  <img src="Assets/Gifs/gameplay.gif" alt="Gameplay Preview" width="90%">
-</p>
+### A Physics-Based Sandbox Made Just for You
 
+Build • Experiment • Destroy • Create
 ---
 
 ![Status](https://img.shields.io/badge/Status-Early_Development-orange)
