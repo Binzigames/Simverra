@@ -4,7 +4,7 @@
 
 <!-- Banner -->
 <p align="center">
-  <img src="Assets/Images/banner.png" alt="Simverra Banner" width="100%">
+  <img src="Assets/Images/Simverra_logo.png" alt="Simverra_capsule" width="100%">
 </p>
 
 ### A Physics-Based Sandbox Made Just for You
@@ -19,6 +19,9 @@ Build • Experiment • Destroy • Create
 
 </div>
 
+ifyou want to use our logo visit:
+
+📂 [brand guidline](./BRANDGUIDLINE.md)
 # About
 
 **Simverra** is a physics-based sandbox game developed by a team of two passionate developers.
@@ -38,6 +41,9 @@ Whether you enjoy building massive structures, designing complex chain reactions
 - 🔧 Custom game configuration
 - 🎵 Integrated audio system
 
+<p align="center">
+  <img src="Assets/Images/Simverra_capsule.png" alt="Simverra_capsule" width="100%">
+</p>
 ---
 
 # Gameplay
@@ -86,17 +92,17 @@ Simverra/
 
 ## Sand Engine
 
-| Folder | Description |
-|---------|-------------|
-| 📂 [Additions](./Sand%20Engine/Additions/) | APIs and additional utilities |
-| 🔊 [Audio](./Sand%20Engine/Audio/) | Audio engine |
-| 📊 [DATA](./Sand%20Engine/DATA/) | Game configuration and saved data |
-| ⚙️ [Physics](./Sand%20Engine/Physics/) | Physics engine |
-| 🎨 [Visuals](./Sand%20Engine/Visuals/) | Rendering, UI and drawing |
-| 🐞 [Debugger](./Sand%20Engine/Debugger/) | Debug console |
-| 📚 [libs](./Sand%20Engine/libs/) | External libraries |
-| 🧠 [Logic Engine](./Sand%20Engine/Logic%20engine/) | Core gameplay logic |
-| 🌳 [root](./Sand%20Engine/root/) | Engine entry point |
+| Folder                                        | Description |
+|-----------------------------------------------|-------------|
+| 📂 [Additions](./SandEngine/Additions/)       | APIs and additional utilities |
+| 🔊 [Audio](./SandEngine/Audio/)               | Audio engine |
+| 📊 [DATA](./SandEngine/DATA/)                 | Game configuration and saved data |
+| ⚙️ [Physics](./SandEngine/Physics/)           | Physics engine |
+| 🎨 [Visuals](./SandEngine/Visuals/)           | Rendering, UI and drawing |
+| 🐞 [Debugger](./SandEngine/Debugger/)         | Debug console |
+| 📚 [libs](./SandEngine/libs/)                 | External libraries |
+| 🧠 [Logic Engine](./SandEngine/LogicsEngine/) | Core gameplay logic |
+| 🌳 [root](./SandEngine/root/)                 | Engine entry point |
 
 ## Assets
 
