@@ -44,7 +44,7 @@ Whether you enjoy building massive structures, designing complex chain reactions
 <p align="center">
   <img src="Assets/Images/Simverra_capsule.png" alt="Simverra_capsule" width="100%">
 </p>
----
+
 
 # Gameplay
 
