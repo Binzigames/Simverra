@@ -51,17 +51,17 @@ Whether you enjoy building massive structures, designing complex chain reactions
 ### Cozy game
 We designed Simvera to be a cozy place where you can slow down, experiment, and simply enjoy watching the world react naturally. Whether you're building or just playing with physics, there's always something satisfying to discover.
 
-<img src="Assets/Gifs/build.gif" width="100%">
+<img src="Assets/Gifs/build.gif" width="30%">
 
 ### create anything
 Turn simple ideas into amazing creations. Build machines, design worlds, trigger explosions, or embrace your inner evil genius and see what happens. Every object follows real physics, making experimentation endlessly fun.
 
-<img src="Assets/Gifs/physics.gif" width="100%">
+<img src="Assets/Gifs/physics.gif" width="30%">
 
 ### Optimization
 Python is slow high end lang. But we trying to make game as effective as posible!
 
-<img src="Assets/Gifs/water.gif" width="100%">
+<img src="Assets/Gifs/water.gif" width="30%">
 
 ---
 
