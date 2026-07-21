@@ -1,5 +1,6 @@
 #manages apis <3
 from SandEngine.Libs import *
+from SandEngine.DATA.GameConfig import *
 
 DISCORD_CLIENT_ID = "1528705424616984668"
 
@@ -13,7 +14,7 @@ def init_apis():
         state="Creating something new...",
         details="Playing",
         large_image="Assets/icon",
-        large_text="Simverra"
+        large_text=w_title
     )
 
 def terminate_apis():
