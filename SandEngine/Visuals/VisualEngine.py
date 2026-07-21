@@ -730,7 +730,7 @@ def draw_ui():
         panel_ui(panel)
 
         ui_text(
-            "Simverra",
+            w_title,
             panel.x + 40,
             panel.y + 45,
             54,

@@ -1,5 +1,6 @@
 # LOGIC ENGINE COUNTS MATH ETC
 #importing for you honey ~
+from SandEngine.Additions.ModdingEngine import is_moded
 from SandEngine.Libs import *
 from SandEngine.DATA.TMP import *
 from SandEngine.Visuals.VisualEngine import *
@@ -119,8 +120,21 @@ material_groups = {
 
     "Special": [
         ("Gravity", select_gravity),
+    ],
+    "Mods": [
+
     ]
 }
+
+def refresh_material_groups(mods):
+    material_groups["Mods"] = [
+        item
+        for mod in mods
+        for item in (
+            [(f"[{mod.name}]", None)] +
+            (mod.build_menu() or mod.menu)
+        )
+    ]
 def handle_ui_buttons():
 
     global opened_group

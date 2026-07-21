@@ -92,17 +92,17 @@ Simverra/
 
 ## Sand Engine
 
-| Folder                                        | Description |
-|-----------------------------------------------|-------------|
-| 📂 [Additions](./SandEngine/Additions/)       | APIs and additional utilities |
-| 🔊 [Audio](./SandEngine/Audio/)               | Audio engine |
-| 📊 [DATA](./SandEngine/DATA/)                 | Game configuration and saved data |
-| ⚙️ [Physics](./SandEngine/Physics/)           | Physics engine |
-| 🎨 [Visuals](./SandEngine/Visuals/)           | Rendering, UI and drawing |
-| 🐞 [Debugger](./SandEngine/Debugger/)         | Debug console |
-| 📚 [libs](./SandEngine/libs/)                 | External libraries |
-| 🧠 [Logic Engine](./SandEngine/LogicsEngine/) | Core gameplay logic |
-| 🌳 [root](./SandEngine/root/)                 | Engine entry point |
+| Folder                                     | Description |
+|--------------------------------------------|-------------|
+| 📂 [Additions](./SandEngine/Additions/)    | APIs and additional utilities |
+| 🔊 [Audio](./SandEngine/Audio/)            | Audio engine |
+| 📊 [DATA](./SandEngine/DATA/)              | Game configuration and saved data |
+| ⚙️ [Physics](./SandEngine/Physics/)        | Physics engine |
+| 🎨 [Visuals](./SandEngine/Visuals/)        | Rendering, UI and drawing |
+| 🐞 [Debugger](./SandEngine/Debugger/)      | Debug console |
+| 📚 [libs](./SandEngine/libs/)              | External libraries |
+| 🧠 [Logic Engine](./SandEngine/Additions/) | Core gameplay logic |
+| 🌳 [root](./SandEngine/root/)              | Engine entry point |
 
 ## Assets
 
