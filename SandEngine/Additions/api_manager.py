@@ -14,7 +14,7 @@ def init_apis():
         state="Creating something new...",
         details="Playing",
         large_image="Assets/icon",
-        large_text=w_title
+        large_text="Simverra"
     )
 
 def terminate_apis():

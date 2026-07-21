@@ -243,6 +243,44 @@ def handle_ui_buttons():
 
     )
 
+    Button(
+
+        pr.Rectangle(
+
+            clear_panel.x + 10,
+
+            clear_panel.y - 34,
+
+            clear_w - 20,
+
+            32
+        ),
+
+        "SAVE WORLD",
+
+        save_world_as
+
+    )
+
+    Button(
+
+        pr.Rectangle(
+
+            clear_panel.x + 10,
+
+            clear_panel.y - 74,
+
+            clear_w - 20,
+
+            32
+        ),
+
+        "LOAD WORLD",
+
+        load_world_from_file
+
+    )
+
 
 
     # ==========================

@@ -22,7 +22,90 @@ camera.offset = pr.Vector2(0, 0)
 camera.rotation = 0.0
 camera.zoom = 1.0
 
+# =====================
+# SAVE USER WORLD
+# =====================
 
+def save_world_as():
+    global world
+
+    root = tk.Tk()
+    root.withdraw()
+
+    path = filedialog.asksaveasfilename(
+        title="Save SimWorld",
+        defaultextension=WORLD_EXTENSION,
+        filetypes=[
+            ("SimWorld map", "*.simvworld"),
+            ("All files", "*.*")
+        ]
+    )
+
+    root.destroy()
+
+    if not path:
+        return
+
+    data = {
+        "format": "SimVWorld",
+        "version": 1,
+        "width": MAP_W,
+        "height": MAP_H,
+        "world": world
+    }
+
+    with open(path, "w") as f:
+        json.dump(data, f)
+
+    print_message("World exported", 0)
+
+
+
+# =====================
+# LOAD USER WORLD
+# =====================
+
+def load_world_from_file():
+    global world
+    global map_texture
+
+    root = tk.Tk()
+    root.withdraw()
+
+    path = filedialog.askopenfilename(
+        title="Open SimWorld",
+        filetypes=[
+            ("SimWorld map", "*.simvworld"),
+            ("All files", "*.*")
+        ]
+    )
+
+    root.destroy()
+
+    if not path:
+        return
+
+    try:
+
+        with open(path, "r") as f:
+            data = json.load(f)
+
+
+        if data.get("format") != "SimVWorld":
+            print_message("Wrong world format", 1)
+            return
+
+
+        world = data["world"]
+
+        # оновити текстуру карти
+        map_texture = None
+
+        print_message("World loaded", 0)
+
+
+    except Exception as e:
+        print_message(str(e), 1)
 #=====================
 # map functions
 #=====================

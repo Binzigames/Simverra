@@ -50,7 +50,10 @@ def init_root():
     draw_loading_screen()
     pr.end_drawing()
 
-    init_apis()
+    try:
+        init_apis()
+    except Exception:
+        pass
     init_mods()
     activate_world(get_world())
     update_materials(get_world())

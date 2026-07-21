@@ -27,6 +27,9 @@ w_title = "Simverra 1.0"
 #debuger
 d_show_logs = False
 
+#extentions
+WORLD_EXTENSION = ".simvworld"
+
 
 # loading screen
 loading_texts = [
