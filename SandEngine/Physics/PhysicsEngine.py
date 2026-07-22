@@ -240,7 +240,7 @@ def update_gas(world, x, y):
     if not inside(x, y):
         return
 
-    if world[y][x] != Gas:
+    if world[y][x] != GAS:
         return
 
 
@@ -296,7 +296,7 @@ def update_gas(world, x, y):
                 break
 
 
-            world[y][nx] = Gas
+            world[y][nx] = GAS
             world[y][x] = AIR
 
 
@@ -353,6 +353,59 @@ def update_bomb(world, x, y):
     if below != BOMB:
         explode(world, x, y)
 
+
+# ===== FIRE =====
+def update_fire(world, x, y):
+
+    if not inside(x, y):
+        return
+
+    if world[y][x] != FIRE:
+        return
+
+    # життя вогню
+    fire_life[(x, y)] = fire_life.get((x, y), 12) - 1
+
+    if fire_life[(x, y)] <= 0:
+        world[y][x] = AIR
+        fire_life.pop((x, y), None)
+        mark_dirty(x, y)
+        return
+
+    if y > 0 and world[y-1][x] == AIR:
+        move_cell(world, x, y, x, y-1)
+        fire_life[(x, y-1)] = fire_life.pop((x, y))
+        return
+
+    for dy in (-1, 0, 1):
+        for dx in (-1, 0, 1):
+
+            nx = x + dx
+            ny = y + dy
+
+            if not inside(nx, ny):
+                continue
+
+            tile = world[ny][nx]
+
+            if tile == WATER:
+                world[ny][nx] = GAS
+                mark_dirty(nx, ny)
+                activate(nx, ny)
+
+
+            #elif tile == GAS:
+                #explode(world, nx, ny)
+
+            elif tile == BOMB:
+                explode(world, nx, ny)
+
+
+            elif tile == SOIL:
+                if random.random() < 0.03:
+                    world[ny][nx] = FIRE
+                    fire_life[(nx, ny)] = random.randint(5, 10)
+
 # ===== MAIN UPDATE =====
 def update_materials(world):
     global active_cells
@@ -379,8 +432,10 @@ def update_materials(world):
             update_water(world,x,y)
         elif tile == BOMB:
             update_bomb(world, x, y)
-        elif tile == Gas:
+        elif tile == GAS:
             update_gas(world, x, y)
+        elif tile == FIRE:
+            update_fire(world, x, y)
 
 
         count += 1
@@ -400,5 +455,5 @@ def activate_world(world):
 
     for y in range(MAP_H):
         for x in range(MAP_W):
-            if world[y][x] in (SAND, WATER, GRAVIY, BOMB , SOIL , Gas):
+            if world[y][x] in (SAND, WATER, GRAVIY, BOMB , SOIL , GAS , FIRE):
                 activate(x, y)

@@ -107,10 +107,14 @@ STONE = 4
 GRAVIY = 5
 BOMB = 6
 SOIL = 7
-Gas = 8
+GAS = 8
+FIRE = 9
+
 
 
 #options
+fire_life = {}
+
 explosions = []
 EXPLOSION_RADIUS = 20
 # DIRTY PIXELS

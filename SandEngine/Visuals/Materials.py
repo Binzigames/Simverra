@@ -142,3 +142,19 @@ def M_soil(color, x, y , world):
         35 + nois // 3,
         255
     )
+# =========================
+# FIRE
+# =========================
+def M_fire( x, y):
+
+    flicker = int(
+        math.sin(pr.get_time() * 18 + x * 0.7 + y * 0.5) * 25
+    )
+
+    nois = tex_noise(x, y)
+
+    r = min(255, 240 + flicker)
+    g = max(80, 170 + nois // 3 + flicker)
+    b = max(0, 30 + nois // 8)
+
+    return pr.Color(r, g, b, 255)

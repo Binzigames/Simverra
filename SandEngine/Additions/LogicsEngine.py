@@ -50,19 +50,6 @@ def handle_controls():
                     if not get_mouse_hovery():
                         world_set(wx, wy, 0)
 
-
-    if pr.is_key_pressed(pr.KeyboardKey.KEY_ONE):
-        Curent_material = 2
-
-    elif pr.is_key_pressed(pr.KeyboardKey.KEY_TWO):
-        Curent_material = 3
-
-    elif pr.is_key_pressed(pr.KeyboardKey.KEY_THREE):
-        Curent_material = 4
-
-    elif pr.is_key_pressed(pr.KeyboardKey.KEY_FOUR):
-        Curent_material = 5
-
     if pr.is_key_pressed(pr.KeyboardKey.KEY_F11):
 
         Fullscreen = not Fullscreen
@@ -106,6 +93,10 @@ def select_gas():
     global Curent_material
     Curent_material = 8
 
+def select_fire():
+    global Curent_material
+    Curent_material = 9
+
 def reset_map():
     global world
 
@@ -127,7 +118,7 @@ material_groups = {
         ("Soil", select_grass),
         ("Sand", select_sand),
         ("Water", select_water),
-        ("Gas", select_gas),
+        ("GAS", select_gas),
     ],
 
     "Not Physical": [
@@ -137,6 +128,7 @@ material_groups = {
     "Special": [
         ("Gravity", select_gravity),
         ("Bomb", select_bomb),
+        ("Fire", select_fire),
     ],
     "Mods": [
 
