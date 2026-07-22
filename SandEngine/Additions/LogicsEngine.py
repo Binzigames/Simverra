@@ -98,6 +98,10 @@ def select_bomb():
     global Curent_material
     Curent_material = 6
 
+def select_grass():
+    global Curent_material
+    Curent_material = 7
+
 def reset_map():
     global world
 
@@ -116,6 +120,7 @@ opened_group = None
 
 material_groups = {
     "Physics": [
+        ("Soil", select_grass),
         ("Sand", select_sand),
         ("Water", select_water),
     ],

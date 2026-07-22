@@ -82,8 +82,7 @@ def update_sand(world,x,y):
     if not inside(x,y):
         return
 
-
-    if world[y][x] != SAND and world[y][x] != GRAVIY:
+    if world[y][x] not in (SAND, GRAVIY, SOIL):
         return
 
 
@@ -259,8 +258,8 @@ def explode(world, x, y):
         explosions.append({
             "x": x * PIXEL_SIZE + PIXEL_SIZE // 2,
             "y": y * PIXEL_SIZE + PIXEL_SIZE // 2,
-            "radius": 2,
-            "life": 0.5,
+            "radius": 1.5,
+            "life": 0.4,
             "max_radius": EXPLOSION_RADIUS * PIXEL_SIZE * 2
         })
 
@@ -298,13 +297,10 @@ def update_materials(world):
         tile = world[y][x]
 
 
-        if tile == SAND or tile == GRAVIY:
-
+        if tile == SAND or tile == GRAVIY or tile == SOIL:
             update_sand(world,x,y)
 
-
         elif tile == WATER:
-
             update_water(world,x,y)
         elif tile == BOMB:
             update_bomb(world, x, y)
@@ -327,5 +323,5 @@ def activate_world(world):
 
     for y in range(MAP_H):
         for x in range(MAP_W):
-            if world[y][x] in (SAND, WATER, GRAVIY, BOMB):
+            if world[y][x] in (SAND, WATER, GRAVIY, BOMB , SOIL):
                 activate(x, y)

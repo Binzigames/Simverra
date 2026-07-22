@@ -106,6 +106,7 @@ WATER = 3
 STONE = 4
 GRAVIY = 5
 BOMB = 6
+SOIL = 7
 
 
 #options

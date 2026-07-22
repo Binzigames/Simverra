@@ -117,3 +117,17 @@ def M_Background():
 
     for y in range(0, pr.get_screen_height(), 50):
         pr.draw_line(0, y, pr.get_screen_width(), y, grid_color)
+
+# =========================
+# GRASS + DIRT
+# =========================
+def M_soil(color, x, y , world):
+
+    nois = tex_noise(x, y)
+
+    return pr.Color(
+        110 + nois,
+        70 + nois // 2,
+        35 + nois // 3,
+        255
+    )
