@@ -107,6 +107,7 @@ STONE = 4
 GRAVIY = 5
 BOMB = 6
 SOIL = 7
+Gas = 8
 
 
 #options

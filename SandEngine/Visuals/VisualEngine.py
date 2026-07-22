@@ -241,8 +241,12 @@ def update_map_texture():
 
             elif cell == 6 :
                 color = M_bomb(color, x, y)
+
             elif cell == 7:
                 color = M_soil(color, x, y, get_world())
+
+            elif cell == 8:
+                color = M_Gas()
 
 
             for py in range(PIXEL_SIZE):
@@ -274,11 +278,15 @@ def update_cell_texture(x, y):
 
     elif cell == 5:
         color = M_graviy(pr.GRAY, x, y)
+
     elif cell == 6:
         color = M_bomb(color, x, y)
 
     elif cell == 7:
         color = M_soil(color, x, y, get_world())
+
+    elif cell == 8:
+        color = M_Gas()
 
 
     for py in range(PIXEL_SIZE):
@@ -326,10 +334,15 @@ def update_dirty_texture():
 
         elif cell == 5:
             color = M_graviy(pr.GRAY, x, y)
+
         elif cell == 6:
             color = M_bomb(color, x, y)
+
         elif cell == 7:
             color = M_soil(color, x, y, get_world())
+
+        elif cell == 8:
+            color = M_Gas()
 
 
 

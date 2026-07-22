@@ -232,6 +232,81 @@ def update_water(world,x,y):
 
             return
 
+
+# ===== GASES =====
+
+def update_gas(world, x, y):
+
+    if not inside(x, y):
+        return
+
+    if world[y][x] != Gas:
+        return
+
+
+    if y - 1 >= 0:
+
+        if world[y-1][x] == AIR:
+
+            move_cell(
+                world,
+                x, y,
+                x, y-1
+            )
+
+            return
+
+
+    direction = (
+        -1
+        if random.getrandbits(1)
+        else 1
+    )
+
+
+    for dx in (direction, -direction):
+
+        nx = x + dx
+
+        if inside(nx, y-1):
+
+            if world[y-1][nx] == AIR:
+
+                move_cell(
+                    world,
+                    x, y,
+                    nx, y-1
+                )
+
+                return
+
+
+    FLOW = 4
+
+    for dx in (direction, -direction):
+
+        for dist in range(1, FLOW + 1):
+
+            nx = x + dx * dist
+
+            if not inside(nx, y):
+                break
+
+            if world[y][nx] != AIR:
+                break
+
+
+            world[y][nx] = Gas
+            world[y][x] = AIR
+
+
+            mark_dirty(x, y)
+            mark_dirty(nx, y)
+
+            add_neighbors(x, y)
+            add_neighbors(nx, y)
+
+            return
 # ===== BOMB =====
 
 
@@ -304,6 +379,8 @@ def update_materials(world):
             update_water(world,x,y)
         elif tile == BOMB:
             update_bomb(world, x, y)
+        elif tile == Gas:
+            update_gas(world, x, y)
 
 
         count += 1
@@ -323,5 +400,5 @@ def activate_world(world):
 
     for y in range(MAP_H):
         for x in range(MAP_W):
-            if world[y][x] in (SAND, WATER, GRAVIY, BOMB , SOIL):
+            if world[y][x] in (SAND, WATER, GRAVIY, BOMB , SOIL , Gas):
                 activate(x, y)

@@ -102,6 +102,10 @@ def select_grass():
     global Curent_material
     Curent_material = 7
 
+def select_gas():
+    global Curent_material
+    Curent_material = 8
+
 def reset_map():
     global world
 
@@ -123,6 +127,7 @@ material_groups = {
         ("Soil", select_grass),
         ("Sand", select_sand),
         ("Water", select_water),
+        ("Gas", select_gas),
     ],
 
     "Not Physical": [
