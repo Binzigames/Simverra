@@ -22,7 +22,7 @@ UI_C_ACCENT  = pr.Color(255, 210, 120, 255)
 w_fps_lock = 60
 w_x = 1000
 w_y = 800
-w_title = "Simverra 1.0"
+w_title = "Simverra 1.1"
 
 #debuger
 d_show_logs = False
