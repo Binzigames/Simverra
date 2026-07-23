@@ -59,6 +59,7 @@ Welcome_screen_shown = False
 debug_menu = False
 object_menu = False
 object_mode = False
+show_ui = True
 
 selected_object = "BOX"
 
@@ -138,3 +139,14 @@ GRAVITY = 600
 #=====================
 Music_Loudnes = 0.2
 SFX_Loudnes = 0.1
+
+#=====================
+#TOGLES
+#=====================
+def togle_ui():
+    global show_ui
+    show_ui = not show_ui
+
+def get_togle_ui():
+    global show_ui
+    return show_ui

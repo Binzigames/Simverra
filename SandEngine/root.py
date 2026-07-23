@@ -14,7 +14,9 @@ from SandEngine.Additions.ModdingEngine import *
 def visuals():
     pr.begin_drawing()
     visuals_root()
-    handle_ui_buttons()
+
+    if get_togle_ui():
+        handle_ui_buttons()
 
     if is_moded:
         render_mods()

@@ -15,7 +15,7 @@ from SandEngine.Audio.AudioEngine import *
 #=====================
 
 def handle_controls():
-    global Curent_material, Fullscreen
+    global Curent_material, Fullscreen , show_ui
 
     mouse = pr.get_mouse_position()
     world_mouse = pr.get_screen_to_world_2d(mouse, camera)
@@ -50,7 +50,7 @@ def handle_controls():
                     if not get_mouse_hovery():
                         world_set(wx, wy, 0)
 
-    if pr.is_key_pressed(pr.KeyboardKey.KEY_F11):
+    if pr.is_key_pressed(pr.KeyboardKey.KEY_F10):
 
         Fullscreen = not Fullscreen
 
@@ -58,6 +58,10 @@ def handle_controls():
 
         if not Fullscreen:
             pr.set_window_size(800, 900)
+
+    if pr.is_key_pressed(pr.KeyboardKey.KEY_TAB):
+        togle_ui()
+
 
 #=====================
 # down-screen menu

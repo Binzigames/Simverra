@@ -1060,7 +1060,7 @@ def draw_ui():
     # ==========================
 
     if pr.is_key_pressed(
-            pr.KeyboardKey.KEY_TAB):
+            pr.KeyboardKey.KEY_F11):
         debug_menu = not debug_menu
 
 
