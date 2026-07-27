@@ -1,8 +1,11 @@
 from SandEngine.Libs import *
 
+
 def tex_noise(x, y):
-    random.seed((x * 92837111) ^ (y * 689287499))
-    return random.randint(-18, 18)
+    n = x * 374761393 + y * 668265263
+    n = (n ^ (n >> 13)) * 1274126177
+    n ^= n >> 16
+    return (n & 31) - 16
 
 
 def clamp(v):
