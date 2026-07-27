@@ -7,16 +7,15 @@ from SandEngine.Libs import *
 #=====================
 
 #ui_colors
-UI_C_BG      = pr.Color(38, 41, 48, 220)
-UI_C_PANEL   = pr.Color(48, 52, 60, 240)
-UI_C_BORDER  = pr.Color(72, 78, 90, 255)
+UI_C_BG      = pr.Color(15, 10, 28, 235)
+UI_C_PANEL   = pr.Color(35, 20, 55, 245)
+UI_C_BORDER  = pr.Color(100, 55, 150, 255)
 
-UI_C_TEXT    = pr.Color(236, 238, 244, 255)
-UI_C_MUTED   = pr.Color(170, 176, 188, 255)
+UI_C_TEXT    = pr.Color(230, 220, 255, 255)
+UI_C_MUTED   = pr.Color(145, 125, 180, 255)
 
-UI_C_MAIN    = pr.Color(120, 175, 255, 255)
-UI_C_ACCENT  = pr.Color(255, 210, 120, 255)
-
+UI_C_MAIN    = pr.Color(155, 80, 255, 255)
+UI_C_ACCENT  = pr.Color(255, 190, 90, 255)
 
 #window
 w_fps_lock = 60
