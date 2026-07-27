@@ -1,107 +1,379 @@
+# ==========================================
+# materials
+# ==========================================
+
 from SandEngine.Libs import *
 
 
-def tex_noise(x, y):
-    n = x * 374761393 + y * 668265263
-    n = (n ^ (n >> 13)) * 1274126177
-    n ^= n >> 16
-    return (n & 31) - 16
+# ==========================================
+# GLOBAL STATE
+# ==========================================
 
+FRAME_TIME = 0.0
+
+
+# Noise cache
+_noise_cache = {}
+
+
+# Material caches
+_sand_cache = {}
+_wall_cache = {}
+_water_cache = {}
+_gas_cache = {}
+
+
+# ==========================================
+# FRAME UPDATE
+# ==========================================
+
+def BeginFrame():
+    global FRAME_TIME
+    FRAME_TIME = pr.get_time()
+
+
+
+# ==========================================
+# FAST HELPERS
+# ==========================================
 
 def clamp(v):
-    return max(0, min(255, int(v)))
+
+    if v < 0:
+        return 0
+
+    if v > 255:
+        return 255
+
+    return int(v)
 
 
-# =========================
+
+# ==========================================
+# FAST HASH NOISE
+# ==========================================
+
+def tex_noise(x, y):
+
+    key = (x, y)
+
+    cached = _noise_cache.get(key)
+
+    if cached is not None:
+        return cached
+
+
+    n = x * 374761393 + y * 668265263
+
+    n = (n ^ (n >> 13)) * 1274126177
+
+    n ^= n >> 16
+
+    value = (n & 31) - 16
+
+
+    _noise_cache[key] = value
+
+
+    return value
+
+
+
+# ==========================================
 # SAND
-# =========================
+# ==========================================
+
 def M_Sand(color, x, y):
+
+    key = (x, y)
+
+    cached = _sand_cache.get(key)
+
+    if cached:
+        return cached
+
+
     n = tex_noise(x, y)
 
-    return pr.Color(
-        clamp(210 + n),
-        clamp(175 + n),
-        clamp(100 + n // 2),
+    sparkle = tex_noise(
+        x + 71,
+        y + 53
+    )
+
+
+    r = 205 + n
+    g = 175 + n
+    b = 110 + n // 2
+
+
+    if sparkle > 13:
+
+        r += 25
+        g += 20
+        b += 40
+
+
+    result = pr.Color(
+        clamp(r),
+        clamp(g),
+        clamp(b),
         255
     )
 
 
-# =========================
+    _sand_cache[key] = result
+
+
+    return result
+
+
+
+# ==========================================
 # WATER
-# =========================
+# ==========================================
+
 def M_Water(color, x, y, world):
 
-    wave = math.sin(x * 0.35 + y * 0.15) * 12
-    n = tex_noise(x, y) * 0.3
+    key = (x, y)
+
+
+    cached = _water_cache.get(key)
+
+
+
+
+    t = FRAME_TIME
+
+
+    wave = math.sin(
+        x * 0.3 +
+        y * 0.2 +
+        t * 2
+    ) * 18
+
+
+    glow = math.sin(
+        t * 4 +
+        x * 0.2
+    ) * 12
+
+
 
     return pr.Color(
-        clamp(25 + wave + n),
-        clamp(110 + wave + n),
-        clamp(200 + wave),
-        199
+        clamp(30 + glow),
+        clamp(120 + wave),
+        clamp(220 + wave),
+        190
     )
 
 
-# =========================
-# GASES
-# =========================
+
+# ==========================================
+# GAS
+# ==========================================
+
 def M_Gas():
 
-    return pr.Color(
-        150,
-        150,
-        150,
-        80
+
+    t = FRAME_TIME
+
+
+    alpha = 70 + int(
+        math.sin(t * 5) * 20
     )
-# =========================
-# WALL
-# =========================
-def M_Wall(color, x, y):
-    n = tex_noise(x, y)
 
-    base = clamp(120 + n)
-
-    return pr.Color(base, base, base, 255)
-# =========================
-# WOOD
-# =========================
-def M_Wood( x, y):
-    n = tex_noise(x, y)
-
-    r = clamp(110 + n)
-    g = clamp(70 + n // 2)
-    b = clamp(35 + n // 3)
-
-    if tex_noise(x * 3, y * 3) > 20:
-        r -= 25
-        g -= 15
-        b -= 10
-
-    return pr.Color(r, g, b, 255)
-
-
-
-# =========================
-# GRAVIY
-# =========================
-def M_graviy(color, x, y):
-    nois = tex_noise(x, y)
 
     return pr.Color(
-        100 + nois,
-        100 + nois,
-        100 + nois // 2,
+        180,
+        120,
+        255,
+        alpha
+    )
+
+
+
+# ==========================================
+# WALL
+# ==========================================
+
+def M_Wall(color, x, y):
+
+    key = (x, y)
+
+
+    cached = _wall_cache.get(key)
+
+    if cached:
+        return cached
+
+
+
+    n = tex_noise(x, y)
+
+
+    vein = tex_noise(
+        x + 91,
+        y + 27
+    )
+
+
+
+    r = 105 + n
+    g = 105 + n
+    b = 115 + n
+
+
+
+    if vein > 12:
+
+        r += 30
+        g += 10
+        b += 60
+
+
+
+    result = pr.Color(
+        clamp(r),
+        clamp(g),
+        clamp(b),
         255
     )
 
-# =========================
-# BOMB
-# =========================
-def M_bomb(color, x, y):
-    nois = tex_noise(x, y)
 
-    if (x % 4 == 1 and y % 4 == 1):
-        return pr.Color(
+    _wall_cache[key] = result
+
+
+    return result
+
+# ==========================================
+# WOOD
+# ==========================================
+
+_wood_cache = {}
+
+
+def M_Wood(x, y):
+
+    key = (x, y)
+
+
+    cached = _wood_cache.get(key)
+
+    if cached:
+        return cached
+
+
+
+    n = tex_noise(x, y)
+
+
+    rings = math.sin(
+        y * 0.4 +
+        x * 0.05
+    ) * 15
+
+
+
+    result = pr.Color(
+
+        clamp(
+            95 +
+            n +
+            rings
+        ),
+
+        clamp(
+            65 +
+            n // 2
+        ),
+
+        clamp(
+            40 +
+            n // 3
+        ),
+
+        255
+    )
+
+
+    _wood_cache[key] = result
+
+
+    return result
+
+
+
+# ==========================================
+# GRAVEL
+# ==========================================
+
+_gravel_cache = {}
+
+
+def M_graviy(color, x, y):
+
+    key = (x, y)
+
+
+    cached = _gravel_cache.get(key)
+
+    if cached:
+        return cached
+
+
+
+    n = tex_noise(x, y)
+
+
+
+    result = pr.Color(
+
+        100 + n,
+
+        100 + n,
+
+        100 + n // 2,
+
+        255
+    )
+
+
+    _gravel_cache[key] = result
+
+
+    return result
+
+
+
+# ==========================================
+# BOMB
+# ==========================================
+
+_bomb_cache = {}
+
+
+def M_bomb(color, x, y):
+
+    key = (x, y)
+
+
+    cached = _bomb_cache.get(key)
+
+    if cached:
+        return cached
+
+
+
+    n = tex_noise(x, y)
+
+
+
+    if (
+        (x & 3) == 1 and
+        (y & 3) == 1
+    ):
+
+        result = pr.Color(
             255,
             40,
             40,
@@ -109,167 +381,235 @@ def M_bomb(color, x, y):
         )
 
 
-    return pr.Color(
-        70 + nois,
-        70 + nois,
-        80 + nois,
-        255
-    )
-# =========================
-# BACKGROUND
-# =========================
-def M_Background():
-    pr.clear_background(pr.Color(35, 35, 40, 255))
-    #gradient
-    width = pr.get_screen_width()
-    height = pr.get_screen_height()
+    else:
 
-    top = pr.Color(45, 45, 50, 255)
-    bottom = pr.Color(25, 25, 30, 255)
+        result = pr.Color(
 
-    for y in range(height):
-        t = y / height
+            70 + n,
 
-        r = int(top.r * (1 - t) + bottom.r * t)
-        g = int(top.g * (1 - t) + bottom.g * t)
-        b = int(top.b * (1 - t) + bottom.b * t)
+            70 + n,
 
-        pr.draw_line(
-            0,
-            y,
-            width,
-            y,
-            pr.Color(r, g, b, 255)
+            80 + n,
+
+            255
         )
-    #grid
-    grid_color = pr.Color(55, 55, 60, 80)
 
-    for x in range(0, pr.get_screen_width(), 50):
-        pr.draw_line(x, 0, x, pr.get_screen_height(), grid_color)
 
-    for y in range(0, pr.get_screen_height(), 50):
-        pr.draw_line(0, y, pr.get_screen_width(), y, grid_color)
 
-# =========================
-# GRASS + DIRT
-# =========================
-def M_soil(color, x, y , world):
+    _bomb_cache[key] = result
 
-    nois = tex_noise(x, y)
 
-    return pr.Color(
-        110 + nois,
-        70 + nois // 2,
-        35 + nois // 3,
+    return result
+
+
+
+# ==========================================
+# SOIL
+# ==========================================
+
+_soil_cache = {}
+
+
+def M_soil(color, x, y, world):
+
+    key = (x, y)
+
+
+    cached = _soil_cache.get(key)
+
+    if cached:
+        return cached
+
+
+
+    n = tex_noise(x, y)
+
+
+
+    result = pr.Color(
+
+        110 + n,
+
+        70 + n // 2,
+
+        35 + n // 3,
+
         255
     )
-# =========================
+
+
+
+    _soil_cache[key] = result
+
+
+    return result
+
+
+
+# ==========================================
 # FIRE
-# =========================
-def M_fire( x, y):
+# ==========================================
 
-    flicker = int(
-        math.sin(pr.get_time() * 18 + x * 0.7 + y * 0.5) * 25
+def M_fire(x, y):
+
+
+    t = FRAME_TIME
+
+
+
+    flicker = math.sin(
+        t * 30 +
+        x +
+        y
+    ) * 35
+
+
+
+    return pr.Color(
+
+        255,
+
+        clamp(
+            80 + flicker
+        ),
+
+        clamp(
+            180 + flicker
+        ),
+
+        255
     )
 
-    nois = tex_noise(x, y)
-
-    r = min(255, 240 + flicker)
-    g = max(80, 170 + nois // 3 + flicker)
-    b = max(0, 30 + nois // 8)
-
-    return pr.Color(r, g, b, 255)
-
-# =========================
-# BlackHole
-# =========================
-def M_hole(x, y):
-
-    t = pr.get_time()
 
 
-    u = x / 16.0
-    v = y / 16.0
+# ==========================================
+# BLACK HOLE CACHE
+# ==========================================
+
+_hole_cache = {}
 
 
-
-    space = (math.sin(u * 0.8) + math.cos(v * 0.7)) * 0.5
-
-    bg_r = int(5 + 10 * space)
-    bg_g = int(8 + 15 * space)
-    bg_b = int(25 + 50 * space)
+def _create_hole_pixel(x, y):
 
 
+    u = x / 18
+    v = y / 18
 
-    holes = [
-        (0.25, 0.30, 0.10),
-        (0.70, 0.25, 0.07),
-        (0.45, 0.75, 0.13),
-        (0.85, 0.70, 0.08),
-        (0.15, 0.80, 0.06),
-    ]
 
-    total_glow = 0
-    total_dark = 0
+    dx = u - 0.5
+    dy = v - 0.5
 
-    for hx, hy, size in holes:
 
-        dx = u - hx
-        dy = v - hy
+    dist2 = (
+        dx * dx +
+        dy * dy
+    )
 
-        d = math.sqrt(dx*dx + dy*dy)
-
-        angle = math.atan2(dy, dx)
-
-        noise = tex_noise(x + int(hx*100), y + int(hy*100)) / 255.0
+    angle = math.atan2(
+        dy,
+        dx
+    )
 
 
 
-        ring = math.sin(
-            angle * 12 -
-            t * 6 +
-            noise * 8
+    dist = dist2 ** 0.5
+
+
+
+    warp = math.sin(
+        angle * 10 +
+        dist * 30
+    ) * 0.08
+
+
+    dist += warp
+
+
+
+    hole = max(
+        0,
+        1 - dist / 0.18
+    )
+
+
+    hole = hole ** 5
+
+
+
+    ring = math.exp(
+        -(
+            (dist - 0.26)
+            * 28
+        ) ** 2
+    )
+
+
+
+    swirl = (
+        math.sin(
+            angle * 14 +
+            dist * 80
         )
-
-
-        glow = math.exp(
-            -((d - size*2.2) * 30)**2
-        )
-
-        glow *= 0.6 + ring * 0.4
+        + 1
+    ) * 0.5
 
 
 
-        hole = 1.0 - min(
-            1.0,
-            d / size
-        )
-
-        hole = hole ** 4
-
-
-        total_glow += glow
-        total_dark += hole
+    ring *= (
+        0.5 +
+        swirl
+    )
 
 
 
-
-    star_noise = tex_noise(x*3, y*3)
-
-    if star_noise > 245:
-        bg_r += 80
-        bg_g += 80
-        bg_b += 120
-
+    aura = math.exp(
+        -(
+            (dist - 0.36)
+            * 10
+        ) ** 2
+    )
 
 
 
-    r = bg_r + int(total_glow * 180)
-    g = bg_g + int(total_glow * 70)
-    b = bg_b + int(total_glow * 230)
+    r = 8
+    g = 5
+    b = 20
 
 
-    dark = int(total_dark * 255)
+
+    r += int(
+        ring * 255
+    )
+
+    g += int(
+        ring * 80
+    )
+
+    b += int(
+        ring * 255
+    )
+
+
+
+    r += int(
+        aura * 60
+    )
+
+    g += int(
+        aura * 20
+    )
+
+    b += int(
+        aura * 140
+    )
+
+
+
+    dark = int(
+        hole * 255
+    )
+
+
 
     r -= dark
     g -= dark
@@ -277,18 +617,398 @@ def M_hole(x, y):
 
 
 
-    flick = int(
-        (math.sin(t*20 + x*y) + 1) * 4
-    )
-
-    r += flick
-    g += flick//2
-    b += flick
-
-
     return pr.Color(
-        int(max(0,min(255,r))),
-        int(max(0,min(255,g))),
-        int(max(0,min(255,b))),
+        clamp(r),
+        clamp(g),
+        clamp(b),
         255
     )
+
+
+
+# ==========================================
+# BLACK HOLE
+# ==========================================
+
+def M_hole(x, y):
+
+    key = (x, y)
+
+
+    cached = _hole_cache.get(key)
+
+
+    if cached:
+
+        return cached
+
+
+
+    result = _create_hole_pixel(
+        x,
+        y
+    )
+
+
+
+    _hole_cache[key] = result
+
+
+    return result
+
+# ==========================================
+# BACKGROUND OPTIMIZED
+# ==========================================
+
+
+_stars = []
+_stars_ready = False
+
+
+def _generate_stars():
+
+    global _stars_ready
+
+
+    if _stars_ready:
+        return
+
+
+    width = pr.get_screen_width()
+    height = pr.get_screen_height()
+
+
+
+    for x in range(0, width, 6):
+
+        for y in range(0, height, 6):
+
+            if tex_noise(
+                x * 4,
+                y * 4
+            ) > 14:
+
+
+                size = 1
+
+                brightness = (
+                    tex_noise(
+                        x,
+                        y
+                    ) + 16
+                ) * 4
+
+
+                _stars.append(
+                    (
+                        x,
+                        y,
+                        size,
+                        brightness
+                    )
+                )
+
+
+    _stars_ready = True
+
+
+
+def M_Background():
+
+    _generate_stars()
+
+
+
+    width = pr.get_screen_width()
+    height = pr.get_screen_height()
+
+
+    t = FRAME_TIME
+
+
+
+    # ==================================
+    # GRADIENT
+    # ==================================
+
+    top_r = 20
+    top_g = 15
+    top_b = 45
+
+
+    bottom_r = 4
+    bottom_g = 5
+    bottom_b = 18
+
+
+
+    for y in range(height):
+
+        k = y / height
+
+
+        color = pr.Color(
+
+            int(
+                top_r *
+                (1-k)
+                +
+                bottom_r *
+                k
+            ),
+
+            int(
+                top_g *
+                (1-k)
+                +
+                bottom_g *
+                k
+            ),
+
+            int(
+                top_b *
+                (1-k)
+                +
+                bottom_b *
+                k
+            ),
+
+            255
+        )
+
+
+        pr.draw_line(
+            0,
+            y,
+            width,
+            y,
+            color
+        )
+
+
+
+    # ==================================
+    # MAGIC FOG
+    # ==================================
+
+    for y in range(
+        0,
+        height,
+        6
+    ):
+
+
+        wave = math.sin(
+            y * 0.018 +
+            t * 0.4
+        ) * 20
+
+
+
+        alpha = 7 + int(
+            (
+                math.sin(
+                    y * 0.05 +
+                    t
+                )
+                + 1
+            )
+            * 3
+        )
+
+
+
+        pr.draw_rectangle(
+
+            int(wave),
+
+            y,
+
+            width,
+
+            6,
+
+            pr.Color(
+                60,
+                35,
+                110,
+                alpha
+            )
+        )
+
+
+
+    # ==================================
+    # NEBULA
+    # ==================================
+
+    for x in range(
+        0,
+        width,
+        40
+    ):
+
+        for y in range(
+            0,
+            height,
+            40
+        ):
+
+
+            n = tex_noise(
+                x // 8,
+                y // 8
+            )
+
+
+
+            if n > 8:
+
+
+                pulse = int(
+
+                    (
+                        math.sin(
+                            t +
+                            x * 0.01 +
+                            y * 0.02
+                        )
+                        + 1
+                    )
+                    * 5
+
+                )
+
+
+
+                pr.draw_circle(
+
+                    x,
+
+                    y,
+
+                    12 + n,
+
+                    pr.Color(
+
+                        70 + pulse,
+
+                        40 + pulse,
+
+                        120 + pulse,
+
+                        10
+
+                    )
+                )
+
+
+
+    # ==================================
+    # STARS
+    # ==================================
+
+    for star in _stars:
+
+
+        x, y, size, bright = star
+
+
+
+        flicker = int(
+
+            (
+                math.sin(
+                    t * 5 +
+                    x * 0.1 +
+                    y * 0.2
+                )
+                + 1
+            )
+            * 20
+
+        )
+
+
+
+        c = clamp(
+            bright +
+            flicker
+        )
+
+
+        pr.draw_pixel(
+
+            x,
+
+            y,
+
+            pr.Color(
+
+                c,
+
+                c,
+
+                255,
+
+                200
+
+            )
+        )
+
+
+
+    # ==================================
+    # MAGIC RUNES
+    # ==================================
+
+    rune = pr.Color(
+        130,
+        70,
+        255,
+        20
+    )
+
+
+    for x in range(
+        100,
+        width,
+        320
+    ):
+
+
+        r = 60 + int(
+            math.sin(
+                t + x
+            ) * 5
+        )
+
+
+        pr.draw_circle_lines(
+            x,
+            120,
+            r,
+            rune
+        )
+
+
+        pr.draw_circle_lines(
+            x,
+            120,
+            r - 8,
+            rune
+        )
+
+
+        pr.draw_circle_lines(
+            x,
+            120,
+            r + 8,
+            rune
+        )
+
+
+
+# ==========================================
+# END
+# ==========================================
