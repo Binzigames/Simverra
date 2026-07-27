@@ -7,18 +7,16 @@ from SandEngine.DATA.GameConfig import *
 
 
 def mark_dirty(x, y):
-
-    if inside(x, y):
+    if 0 <= x < MAP_W and 0 <= y < MAP_H:
         dirty_cells.add((x, y))
-
 
 
 def get_dirty_cells():
 
     global dirty_cells
 
-    result = dirty_cells.copy()
-    dirty_cells.clear()
+    result = dirty_cells
+    dirty_cells = set()
 
     return result
 
@@ -27,25 +25,32 @@ def get_dirty_cells():
 # ===== ACTIVE PHYSICS CELLS =====
 
 active_cells = set()
+next_active = set()
 
 
 def activate(x, y):
-
-    if inside(x, y):
-
-        if y < MAP_H:
-
-            active_cells.add((x, y))
-
+    if 0 <= x < MAP_W and 0 <= y < MAP_H:
+        next_active.add((x, y))
 
 
 def add_neighbors(x, y):
-
     activate(x, y)
-    activate(x, y-1)
-    activate(x, y+1)
-    activate(x-1, y)
-    activate(x+1, y)
+
+    if x > 0:
+        activate(x - 1, y)
+
+    if x + 1 < MAP_W:
+        activate(x + 1, y)
+
+    if y > 0:
+        activate(x, y - 1)
+
+    if y + 1 < MAP_H:
+        activate(x, y + 1)
+
+
+
+dirty_cells = set()
 
 
 
@@ -59,16 +64,30 @@ def inside(x,y):
     )
 
 
+def move_cell(world, x1, y1, x2, y2):
 
-def move_cell(world,x1,y1,x2,y2):
+    material = world[y1][x1]
 
-    world[y2][x2] = world[y1][x1]
+    world[y2][x2] = material
     world[y1][x1] = AIR
 
+    dirty_cells.add((x1, y1))
+    dirty_cells.add((x2, y2))
 
-    mark_dirty(x1,y1)
-    mark_dirty(x2,y2)
+    add_neighbors(x1, y1)
+    add_neighbors(x2, y2)
 
+
+
+def swap_cells(world, x1, y1, x2, y2):
+
+    world[y1][x1], world[y2][x2] = (
+        world[y2][x2],
+        world[y1][x1]
+    )
+
+    dirty_cells.add((x1,y1))
+    dirty_cells.add((x2,y2))
 
     add_neighbors(x1,y1)
     add_neighbors(x2,y2)
@@ -540,36 +559,48 @@ def update_black_hole(world, x, y):
                     )
 # ===== MAIN UPDATE =====
 def update_materials(world):
-    global active_cells
+
+    global active_cells, next_active
+
+
+    active_cells, next_active = next_active, set()
 
 
     count = 0
 
-    for x,y in list(active_cells):
-
-        active_cells.remove((x,y))
-
-
-        if not inside(x,y):
-            continue
-
+    for x,y in active_cells:
 
         tile = world[y][x]
 
 
         if tile == SAND or tile == GRAVIY or tile == SOIL:
+
             update_sand(world,x,y)
 
+
         elif tile == WATER:
+
             update_water(world,x,y)
-        elif tile == BOMB:
-            update_bomb(world, x, y)
+
+
         elif tile == GAS:
-            update_gas(world, x, y)
+
+            update_gas(world,x,y)
+
+
         elif tile == FIRE:
-            update_fire(world, x, y)
+
+            update_fire(world,x,y)
+
+
+        elif tile == BOMB:
+
+            update_bomb(world,x,y)
+
+
         elif tile == BLACK_HOLE:
-            update_black_hole(world, x, y)
+
+            update_black_hole(world,x,y)
 
 
         count += 1
@@ -579,15 +610,32 @@ def update_materials(world):
             break
 
 
+    active_cells.clear()
+
+
 # ===== INITIALIZE MATERIAL =====
 
 def activate_world(world):
-    global active_cells, dirty_cells
+
+    global active_cells, next_active, dirty_cells
 
     active_cells.clear()
+    next_active.clear()
     dirty_cells.clear()
 
-    for y in range(MAP_H):
-        for x in range(MAP_W):
-            if world[y][x] in (SAND, WATER, GRAVIY, BOMB , SOIL , GAS , FIRE , BLACK_HOLE):
-                activate(x, y)
+
+    for y,row in enumerate(world):
+
+        for x,tile in enumerate(row):
+
+            if tile in (
+                SAND,
+                WATER,
+                GRAVIY,
+                BOMB,
+                SOIL,
+                GAS,
+                FIRE,
+                BLACK_HOLE
+            ):
+                next_active.add((x,y))
