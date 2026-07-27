@@ -528,12 +528,15 @@ def world_set(x,y,material=1):
 
         if map_texture:
             update_cell_texture(x,y)
+            upload_map_texture()
             print_message(f"set material on {x} , {y}", 2)
 
 def world_erase(x, y):
     global world
     world_set(x, y, 0)
     update_materials(world)
+    update_cell_texture(x, y)
+    upload_map_texture()
     print_message(f"assassinated material on {x} , {y}", 2)
 
 

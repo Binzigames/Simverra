@@ -22,6 +22,261 @@ def get_dirty_cells():
 
 
 
+# ===== MATERIAL REACTIONS =====
+def grow_tree(world, x, y):
+
+    directions = [
+        (-1,0),
+        (1,0),
+        (0,-1)
+    ]
+
+    random.shuffle(directions)
+
+
+    for dx,dy in directions:
+
+        nx = x + dx
+        ny = y + dy
+
+
+        if inside(nx,ny):
+
+            if world[ny][nx] == AIR:
+
+                world[ny][nx] = WOOD
+
+                mark_dirty(nx,ny)
+                activate(nx,ny)
+
+                return True
+
+
+    return False
+
+def react_materials(world, x, y):
+
+    if not inside(x, y):
+        return False
+
+
+    tile = world[y][x]
+
+
+    for dy in (-1,0,1):
+        for dx in (-1,0,1):
+
+            if dx == 0 and dy == 0:
+                continue
+
+
+            nx = x + dx
+            ny = y + dy
+
+
+            if not inside(nx,ny):
+                continue
+
+
+            other = world[ny][nx]
+
+
+            # =========================
+            # WATER + WOOD -> GROW
+            # =========================
+
+            if tile == WATER and other == WOOD:
+
+                if random.random() < 0.08:
+
+                    world[y][x] = WOOD
+
+                    mark_dirty(x,y)
+                    activate(x,y)
+
+                    grow_tree(world,x,y)
+
+                    return True
+
+
+
+            # =========================
+            # SAND + WOOD -> FIRE
+            # =========================
+
+            if tile in (SAND,GRAVIY) and other == WOOD:
+
+                if random.random() < 0.01:
+
+                    world[ny][nx] = FIRE
+
+                    fire_life[(nx,ny)] = random.randint(8,15)
+
+                    mark_dirty(nx,ny)
+                    activate(nx,ny)
+
+                    return True
+
+
+
+            # =========================
+            # FIRE + WATER -> GAS
+            # =========================
+
+            if tile == FIRE and other == WATER:
+
+                world[y][x] = GAS
+                world[ny][nx] = GAS
+
+                mark_dirty(x,y)
+                mark_dirty(nx,ny)
+
+                activate(x,y)
+                activate(nx,ny)
+
+                return True
+
+
+
+            # =========================
+            # WATER + FIRE -> GAS
+            # =========================
+
+            if tile == WATER and other == FIRE:
+
+                world[y][x] = GAS
+                world[ny][nx] = GAS
+
+                fire_life.pop((nx,ny),None)
+
+                mark_dirty(x,y)
+                mark_dirty(nx,ny)
+
+                activate(x,y)
+                activate(nx,ny)
+
+                return True
+
+
+
+            # =========================
+            # GAS + STONE / WOOD -> WATER
+            # =========================
+
+            if tile == GAS and other in (STONE,WOOD):
+
+                if random.random() < 0.15:
+
+                    world[y][x] = WATER
+
+                    mark_dirty(x,y)
+                    activate(x,y)
+
+                    return True
+
+
+
+            # =========================
+            # WATER + STONE
+            # =========================
+
+            if tile == WATER and other == STONE:
+
+                activate(nx,ny)
+
+
+
+            # =========================
+            # FIRE + GRAVIY -> AIR
+            # =========================
+
+            if tile == FIRE and other == GRAVIY:
+
+                if random.random() < 0.08:
+
+                    world[y][x] = AIR
+
+                    fire_life.pop((x,y),None)
+
+                    mark_dirty(x,y)
+                    activate(x,y)
+
+                    return True
+
+
+
+            # =========================
+            # FIRE + WOOD -> FIRE
+            # =========================
+
+            if tile == FIRE and other == WOOD:
+
+                if random.random() < 0.08:
+
+                    world[ny][nx] = FIRE
+
+                    fire_life[(nx,ny)] = random.randint(10,20)
+
+                    mark_dirty(nx,ny)
+                    activate(nx,ny)
+
+                    return True
+
+
+
+            # =========================
+            # WOOD + SOIL -> WATER
+            # =========================
+
+            if tile == WOOD and other == SOIL:
+
+                if random.random() < 0.01:
+
+                    world[y][x] = WATER
+
+                    mark_dirty(x,y)
+                    activate(x,y)
+
+                    return True
+
+
+
+            # =========================
+            # WATER + SOIL -> SOIL
+            # =========================
+
+            if tile == WATER and other == SOIL:
+
+                if random.random() < 0.02:
+
+                    world[y][x] = SOIL
+
+                    mark_dirty(x,y)
+                    activate(x,y)
+
+                    return True
+
+
+
+            # =========================
+            # SAND + WATER -> SOIL
+            # =========================
+
+            if tile == SAND and other == WATER:
+
+                if random.random() < 0.05:
+
+                    world[y][x] = SOIL
+
+                    mark_dirty(x,y)
+                    activate(x,y)
+
+                    return True
+
+
+
+    return False
+
 # ===== ACTIVE PHYSICS CELLS =====
 
 active_cells = set()
@@ -104,6 +359,8 @@ def update_sand(world,x,y):
     if world[y][x] not in (SAND, GRAVIY, SOIL):
         return
 
+    react_materials(world, x, y)
+
 
 
 
@@ -160,53 +417,57 @@ def update_sand(world,x,y):
 
 # ===== WATER =====
 
-def update_water(world,x,y):
+def update_water(world, x, y):
 
-    if not inside(x,y):
+    if not inside(x, y):
         return
 
+    if world[y][x] != WATER:
+        return
+
+    react_materials(world, x, y)
 
     if world[y][x] != WATER:
         return
 
 
-
-
-
-    if y+1 < MAP_H:
-
+    if y + 1 < MAP_H:
 
         if world[y+1][x] == AIR:
 
             move_cell(
                 world,
-                x,y,
-                x,y+1
+                x, y,
+                x, y+1
             )
 
             return
 
 
+        if world[y+1][x] == GAS:
 
-    direction = (
-        -1
-        if random.getrandbits(1)
-        else 1
-    )
+            world[y+1][x] = WATER
+            world[y][x] = GAS
 
+            mark_dirty(x,y)
+            mark_dirty(x,y+1)
 
+            add_neighbors(x,y)
+            add_neighbors(x,y+1)
 
-
-
-    for dx in (direction,-direction):
-
-        nx=x+dx
+            return
 
 
-        if inside(nx,y+1):
+
+    direction = -1 if random.getrandbits(1) else 1
+
+    for dx in (direction, -direction):
+
+        nx = x + dx
+
+        if inside(nx, y+1):
 
             if world[y+1][nx] == AIR:
-
 
                 move_cell(
                     world,
@@ -217,62 +478,85 @@ def update_water(world,x,y):
                 return
 
 
+    FLOW = 4
 
-    FLOW = 3
+    for dx in (direction, -direction):
 
+        for dist in range(1, FLOW + 1):
 
-    for dx in (direction,-direction):
-
-        for dist in range(1,FLOW+1):
-
-            nx=x+dx*dist
-
+            nx = x + dx * dist
 
             if not inside(nx,y):
                 break
 
 
-            if world[y][nx] != AIR:
+            target = world[y][nx]
+
+
+            if target == AIR:
+
+                world[y][nx] = WATER
+                world[y][x] = AIR
+
+                mark_dirty(x,y)
+                mark_dirty(nx,y)
+
+                add_neighbors(x,y)
+                add_neighbors(nx,y)
+
+                return
+
+
+            elif target == GAS:
+
+                world[y][nx] = WATER
+                world[y][x] = GAS
+
+                mark_dirty(x,y)
+                mark_dirty(nx,y)
+
+                add_neighbors(x,y)
+                add_neighbors(nx,y)
+
+                return
+
+
+            else:
                 break
 
 
+    react_materials(world,x,y)
 
-            world[y][nx]=WATER
-            world[y][x]=AIR
-
-
-            mark_dirty(x,y)
-            mark_dirty(nx,y)
-
-
-            add_neighbors(x,y)
-            add_neighbors(nx,y)
-
-
-            return
-
-
-# ===== GASES =====
+# ===== GAS =====
 
 def update_gas(world, x, y):
 
     if not inside(x, y):
         return
 
+
     if world[y][x] != GAS:
         return
+
+    react_materials(world, x, y)
+
+
+    if world[y][x] != GAS:
+        return
+
 
 
     if y - 1 >= 0:
 
         target = world[y-1][x]
 
+
         if target == AIR:
 
             move_cell(
                 world,
-                x, y,
-                x, y-1
+                x,y,
+                x,y-1
             )
 
             return
@@ -283,37 +567,37 @@ def update_gas(world, x, y):
             world[y-1][x] = GAS
             world[y][x] = WATER
 
-            mark_dirty(x, y)
-            mark_dirty(x, y-1)
 
-            add_neighbors(x, y)
-            add_neighbors(x, y-1)
+            mark_dirty(x,y)
+            mark_dirty(x,y-1)
+
+
+            add_neighbors(x,y)
+            add_neighbors(x,y-1)
 
             return
 
 
 
-    direction = (
-        -1
-        if random.getrandbits(1)
-        else 1
-    )
+    direction = -1 if random.getrandbits(1) else 1
 
 
-    for dx in (direction, -direction):
+    for dx in (direction,-direction):
 
         nx = x + dx
 
-        if inside(nx, y-1):
+
+        if inside(nx,y-1):
 
             target = world[y-1][nx]
+
 
             if target == AIR:
 
                 move_cell(
                     world,
-                    x, y,
-                    nx, y-1
+                    x,y,
+                    nx,y-1
                 )
 
                 return
@@ -324,11 +608,13 @@ def update_gas(world, x, y):
                 world[y-1][nx] = GAS
                 world[y][x] = WATER
 
-                mark_dirty(x, y)
-                mark_dirty(nx, y-1)
 
-                add_neighbors(x, y)
-                add_neighbors(nx, y-1)
+                mark_dirty(x,y)
+                mark_dirty(nx,y-1)
+
+
+                add_neighbors(x,y)
+                add_neighbors(nx,y-1)
 
                 return
 
@@ -336,13 +622,15 @@ def update_gas(world, x, y):
 
     FLOW = 4
 
-    for dx in (direction, -direction):
 
-        for dist in range(1, FLOW + 1):
+    for dx in (direction,-direction):
 
-            nx = x + dx * dist
+        for dist in range(1,FLOW+1):
 
-            if not inside(nx, y):
+            nx = x + dx*dist
+
+
+            if not inside(nx,y):
                 break
 
 
@@ -354,11 +642,13 @@ def update_gas(world, x, y):
                 world[y][nx] = GAS
                 world[y][x] = AIR
 
-                mark_dirty(x, y)
-                mark_dirty(nx, y)
 
-                add_neighbors(x, y)
-                add_neighbors(nx, y)
+                mark_dirty(x,y)
+                mark_dirty(nx,y)
+
+
+                add_neighbors(x,y)
+                add_neighbors(nx,y)
 
                 return
 
@@ -368,13 +658,16 @@ def update_gas(world, x, y):
                 world[y][nx] = GAS
                 world[y][x] = WATER
 
-                mark_dirty(x, y)
-                mark_dirty(nx, y)
 
-                add_neighbors(x, y)
-                add_neighbors(nx, y)
+                mark_dirty(x,y)
+                mark_dirty(nx,y)
+
+
+                add_neighbors(x,y)
+                add_neighbors(nx,y)
 
                 return
+
 
             else:
                 break
@@ -410,7 +703,7 @@ def explode(world, x, y):
         })
 
 def update_bomb(world, x, y):
-
+    react_materials(world, x, y)
     if y + 1 >= MAP_H:
         explode(world, x, y)
         return
@@ -425,6 +718,7 @@ def update_bomb(world, x, y):
         explode(world, x, y)
 
 
+
 # ===== FIRE =====
 def update_fire(world, x, y):
 
@@ -433,6 +727,8 @@ def update_fire(world, x, y):
 
     if world[y][x] != FIRE:
         return
+
+    react_materials(world, x, y)
 
     fire_life[(x, y)] = fire_life.get((x, y), 12) - 1
 
@@ -557,6 +853,7 @@ def update_black_hole(world, x, y):
                         tx,
                         ty
                     )
+    react_materials(world, x, y)
 # ===== MAIN UPDATE =====
 def update_materials(world):
 
@@ -610,8 +907,6 @@ def update_materials(world):
             break
 
 
-    active_cells.clear()
-
 
 # ===== INITIALIZE MATERIAL =====
 
@@ -636,6 +931,7 @@ def activate_world(world):
                 SOIL,
                 GAS,
                 FIRE,
-                BLACK_HOLE
+                BLACK_HOLE,
+                WOOD
             ):
                 next_active.add((x,y))
