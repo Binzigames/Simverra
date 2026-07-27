@@ -45,6 +45,13 @@ loading_texts = [
 ]
 
 
+# =====================
+# SCREEN FADE
+# =====================
+
+fade_alpha = 255
+fade_speed = 20
+fade_active = False
 #=====================
 #VISUAL ENGINE
 #=====================

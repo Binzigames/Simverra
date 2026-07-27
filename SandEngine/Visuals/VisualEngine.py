@@ -1375,6 +1375,15 @@ def draw_explosions():
         if e["life"] <= 0:
             explosions.remove(e)
 
+def draw_fade(alpha):
+
+    pr.draw_rectangle(
+        0,
+        0,
+        pr.get_screen_width(),
+        pr.get_screen_height(),
+        pr.Color(0, 0, 0, alpha)
+    )
 #=====================
 # root
 #=====================

@@ -1,5 +1,5 @@
 #IMPORTING SASSY LIBS
-from SandEngine.Visuals.VisualEngine import visuals_root , get_world , draw_loading_screen
+from SandEngine.Visuals.VisualEngine import visuals_root , get_world , draw_loading_screen , draw_fade
 from SandEngine.Additions.LogicsEngine import handle_controls , handle_ui_buttons , refresh_material_groups
 from SandEngine.Debuger import *
 from SandEngine.Physics.PhysicsEngine import update_materials , activate_world
@@ -58,6 +58,18 @@ def init_root():
     init_mods()
     activate_world(get_world())
     update_materials(get_world())
+    alpha = 255
+
+    while alpha > 0 and not pr.window_should_close():
+        pr.begin_drawing()
+
+        visuals_root()
+
+        draw_fade(alpha) 
+
+        pr.end_drawing()
+
+        alpha -= 5
 
     while not pr.window_should_close():
         root()
