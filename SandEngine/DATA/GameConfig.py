@@ -119,13 +119,13 @@ BLACK_HOLE = 11
 fire_life = {}
 
 explosions = []
-EXPLOSION_RADIUS = 20
+EXPLOSION_RADIUS = 15
 # DIRTY PIXELS
 
 dirty_cells = set()
 
 # optimization
-MAX_MATERIAL_UPDATES = 10000
+MAX_MATERIAL_UPDATES = 15000
 
 #=====================
 #OBJECTS
