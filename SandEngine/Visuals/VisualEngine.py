@@ -106,6 +106,42 @@ def load_world_from_file():
 
     except Exception as e:
         print_message(str(e), 1)
+
+# =====================
+# DYNAMIC MATERIALS
+# =====================
+
+def update_dynamic_materials():
+
+    global world
+
+
+    if world is None:
+        return
+
+
+    changed = False
+
+
+    for y,row in enumerate(world):
+
+        for x,cell in enumerate(row):
+
+
+            if cell in DYNAMIC_MATERIALS:
+
+                update_cell_texture(
+                    x,
+                    y
+                )
+
+                changed = True
+
+
+
+    if changed:
+
+        upload_map_texture()
 #=====================
 # map functions
 #=====================
@@ -270,44 +306,111 @@ def update_map_texture():
 
 
 def update_cell_texture(x, y):
+
     global map_texture
+    global map_image
+
+
+    if world is None:
+        return
+
 
     cell = world[y][x]
 
+
     color = pr.BLANK
 
+
+
     if cell == 2:
-        color = M_Sand(pr.BROWN, x, y)
+
+        color = M_Sand(
+            pr.BROWN,
+            x,
+            y
+        )
+
 
     elif cell == 3:
-        color = M_Water(pr.BLUE, x, y, get_world())
+
+        color = M_Water(
+            pr.BLUE,
+            x,
+            y,
+            world
+        )
+
 
     elif cell == 4:
-        color = M_Wall(pr.GRAY, x, y)
+
+        color = M_Wall(
+            pr.GRAY,
+            x,
+            y
+        )
+
 
     elif cell == 5:
-        color = M_graviy(pr.GRAY, x, y)
+
+        color = M_graviy(
+            pr.GRAY,
+            x,
+            y
+        )
+
 
     elif cell == 6:
-        color = M_bomb(color, x, y)
+
+        color = M_bomb(
+            pr.GRAY,
+            x,
+            y
+        )
+
 
     elif cell == 7:
-        color = M_soil(color, x, y, get_world())
+
+        color = M_soil(
+            pr.BROWN,
+            x,
+            y,
+            world
+        )
+
 
     elif cell == 8:
+
         color = M_Gas()
 
+
+
     elif cell == 9:
-        color = M_fire(x, y)
+
+        color = M_fire(
+            x,
+            y
+        )
+
 
     elif cell == 10:
-        color = M_Wood(x, y)
+
+        color = M_Wood(
+            x,
+            y
+        )
+
 
     elif cell == 11:
-        color = M_hole(x, y)
+
+        color = M_hole(
+            x,
+            y
+        )
+
 
 
     for py in range(PIXEL_SIZE):
+
         for px in range(PIXEL_SIZE):
 
             pr.image_draw_pixel(
@@ -317,10 +420,21 @@ def update_cell_texture(x, y):
                 color
             )
 
-    pr.update_texture(
-        map_texture,
-        map_image.data
-    )
+
+def upload_map_texture():
+
+    global map_texture
+    global map_image
+
+
+    if map_texture:
+
+        pr.update_texture(
+            map_texture,
+            map_image.data
+        )
+
+
 
 #=====================
 # dirty textures
@@ -1268,15 +1382,16 @@ def visuals_root():
 
     dt = pr.get_frame_time()
 
+    BeginFrame()
 
     update_objects(
         world,
         dt
     )
 
-
-
     update_dirty_texture()
+
+    update_dynamic_materials()
 
     pr.begin_mode_2d(camera)
 

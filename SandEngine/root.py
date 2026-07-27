@@ -7,12 +7,10 @@ from SandEngine.Audio.AudioEngine import *
 from Assets.Assets_importer import *
 from SandEngine.Additions.api_manager import *
 from SandEngine.Additions.ModdingEngine import *
-from SandEngine.Visuals.Materials import *
 #=====================
 # root layers
 #=====================
 def visuals():
-    BeginFrame()
     pr.begin_drawing()
     visuals_root()
 

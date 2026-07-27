@@ -79,6 +79,12 @@ OBJECTS = {
         "size": (25,25)
     }
 }
+
+DYNAMIC_MATERIALS = {
+    3,
+    8,
+    9
+}
 #map options
 MAP_W = 256
 MAP_H = 256
