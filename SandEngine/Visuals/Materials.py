@@ -256,51 +256,77 @@ def M_Wood(x, y):
 
     key = (x, y)
 
-
     cached = _wood_cache.get(key)
 
-    if cached:
+    if cached is not None:
         return cached
-
 
 
     n = tex_noise(x, y)
 
+    magic_noise = tex_noise(
+        x + 91,
+        y + 47
+    )
+
 
     rings = math.sin(
-        y * 0.4 +
-        x * 0.05
-    ) * 15
+        y * 0.35 +
+        x * 0.08 +
+        n * 0.05
+    ) * 18
 
+
+    grain = math.sin(
+        x * 0.18 +
+        math.sin(y * 0.05)
+    ) * 12
+
+
+    r = clamp(
+        100 +
+        n +
+        rings +
+        grain
+    )
+
+    g = clamp(
+        65 +
+        n // 2 +
+        rings * 0.4
+    )
+
+    b = clamp(
+        35 +
+        n // 3
+    )
+
+
+    if magic_noise > 11:
+
+        r = clamp(r + 40)
+        g = clamp(g + 10)
+        b = clamp(b + 70)
+
+
+    if magic_noise > 14:
+
+        r = clamp(r + 30)
+        g = clamp(g + 50)
+        b = clamp(b + 120)
 
 
     result = pr.Color(
-
-        clamp(
-            95 +
-            n +
-            rings
-        ),
-
-        clamp(
-            65 +
-            n // 2
-        ),
-
-        clamp(
-            40 +
-            n // 3
-        ),
-
+        r,
+        g,
+        b,
         255
     )
 
 
     _wood_cache[key] = result
 
-
     return result
-
 
 
 # ==========================================
