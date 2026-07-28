@@ -196,39 +196,94 @@ def M_Gas():
 # WALL
 # ==========================================
 
+_wall_cache = {}
+
+
 def M_Wall(color, x, y):
 
     key = (x, y)
 
-
     cached = _wall_cache.get(key)
 
-    if cached:
+    if cached is not None:
         return cached
 
 
+    brick_w = 8
+    brick_h = 5
 
-    n = tex_noise(x, y)
+
+    row = y // brick_h
+
+    offset = 0
+
+    if row % 2:
+        offset = brick_w // 2
 
 
-    vein = tex_noise(
-        x + 91,
-        y + 27
+    bx = (x + offset) // brick_w
+    by = y // brick_h
+
+
+    stone_id = (
+        bx * 73856093 ^
+        by * 19349663
     )
 
 
+    n = tex_noise(
+        bx,
+        by
+    )
 
-    r = 105 + n
-    g = 105 + n
-    b = 115 + n
+
+    base = 120 + n
+
+
+    r = base
+    g = base - 2
+    b = base + 8
+
+
+    detail = tex_noise(
+        x * 2,
+        y * 2
+    )
+
+
+    r += detail // 4
+    g += detail // 4
+    b += detail // 3
 
 
 
-    if vein > 12:
 
-        r += 30
-        g += 10
-        b += 60
+    local_x = (x + offset) % brick_w
+    local_y = y % brick_h
+
+
+    if (
+        local_x == 0 or
+        local_y == 0
+    ):
+
+        r -= 45
+        g -= 45
+        b -= 40
+
+
+
+    crack = tex_noise(
+        bx + 100,
+        by + 200
+    )
+
+
+    if crack > 14:
+
+        r -= 20
+        g -= 20
+        b -= 25
 
 
 
@@ -241,7 +296,6 @@ def M_Wall(color, x, y):
 
 
     _wall_cache[key] = result
-
 
     return result
 
