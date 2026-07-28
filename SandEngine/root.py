@@ -14,6 +14,8 @@ from SandEngine.DATA.GameConfig import *
 #=====================
 def visuals():
     pr.begin_drawing()
+    post = PostProcessController(w_x, w_y)
+    post.begin()
     visuals_root()
 
     if get_togle_ui():
@@ -22,6 +24,9 @@ def visuals():
     if is_moded:
         render_mods()
         ui_mods()
+    post.end()
+
+    post.render()
     pr.end_drawing()
 def physics():
     activate_world(get_world())
