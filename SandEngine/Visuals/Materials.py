@@ -3,7 +3,7 @@
 # ==========================================
 
 from SandEngine.Libs import *
-
+from SandEngine.Visuals.Particles import particles, magic_particles, fire_particles
 
 # ==========================================
 # GLOBAL STATE
@@ -445,52 +445,42 @@ _bomb_cache = {}
 
 
 def M_bomb(color, x, y):
-
     key = (x, y)
 
-
     cached = _bomb_cache.get(key)
-
     if cached:
         return cached
 
-
-
     n = tex_noise(x, y)
 
+    lx = x & 7
+    ly = y & 7
 
-
-    if (
-        (x & 3) == 1 and
-        (y & 3) == 1
-    ):
-
+    if abs(lx - 3) + abs(ly - 3) <= 2:
         result = pr.Color(
             255,
-            40,
-            40,
+            40 + n // 3,
+            40 + n // 4,
             255
         )
 
+    elif lx == ly or lx + ly == 7:
+        result = pr.Color(
+            255,
+            120 + n // 4,
+            120 + n // 4,
+            255
+        )
 
     else:
-
         result = pr.Color(
-
-            70 + n,
-
-            70 + n,
-
-            80 + n,
-
+            45 + n // 4,
+            20 + n // 6,
+            20 + n // 6,
             255
         )
 
-
-
     _bomb_cache[key] = result
-
-
     return result
 
 
@@ -554,7 +544,6 @@ def M_fire(x, y):
         x +
         y
     ) * 35
-
 
 
     return pr.Color(
@@ -744,8 +733,6 @@ def M_hole(x, y):
 
 
     _hole_cache[key] = result
-
-
     return result
 
 # ==========================================

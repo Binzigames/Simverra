@@ -126,21 +126,21 @@ def open_wiki():
 opened_group = None
 
 material_groups = {
-    "Spels": [
+    "Spells": [
         ("Water", select_water),
         ("Mana Fire", select_fire),
         ("Craptionit", select_bomb),
         ("Black Hole", select_hole),
     ],
 
-    "Walls": [
+    "Materials": [
         ("Holy Wall", select_wall),
         ("Oldest Wood", select_wood),
         ("Weak Soil", select_grass),
         ("Mana Sand", select_sand),
     ],
 
-    "Special": [
+    "Sub-materials": [
         ("Graviyton", select_gravity),
         ("Power Gas", select_gas),
     ],
