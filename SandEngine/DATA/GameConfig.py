@@ -29,6 +29,13 @@ d_show_logs = False
 #extentions
 WORLD_EXTENSION = ".simvworld"
 
+#frame optimization
+FRAME = 0
+#frame where phys engine updates
+FRAME_P = 1
+#frame where logic engine updates
+FRAME_L = 2
+#frame for visuals update every  frame
 
 # loading screen
 loading_texts = [

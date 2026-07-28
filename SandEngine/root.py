@@ -7,6 +7,7 @@ from SandEngine.Audio.AudioEngine import *
 from Assets.Assets_importer import *
 from SandEngine.Additions.api_manager import *
 from SandEngine.Additions.ModdingEngine import *
+from SandEngine.DATA.GameConfig import *
 #=====================
 # root layers
 #=====================
@@ -36,6 +37,8 @@ def exit():
     terminate_apis()
     pr.close_window()
     sys.exit()
+
+
 #=====================
 # root
 #=====================
@@ -77,6 +80,13 @@ def init_root():
         exit()
 
 def root():
-    logics()
-    physics()
+    global FRAME
+    FRAME += 1
+
+    if FRAME % FRAME_P == 0:
+        physics()
+
+    if FRAME % FRAME_L == 0:
+        logics()
+
     visuals()
