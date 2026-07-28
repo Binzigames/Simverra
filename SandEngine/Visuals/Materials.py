@@ -196,9 +196,6 @@ def M_Gas():
 # WALL
 # ==========================================
 
-_wall_cache = {}
-
-
 def M_Wall(color, x, y):
 
     key = (x, y)
@@ -225,57 +222,74 @@ def M_Wall(color, x, y):
     by = y // brick_h
 
 
-    stone_id = (
-        bx * 73856093 ^
-        by * 19349663
-    )
-
-
     n = tex_noise(
         bx,
         by
     )
 
 
-    base = 120 + n
-
-
-    r = base
-    g = base - 2
-    b = base + 8
+    r = 115 + n * 2
+    g = 115 + n * 2
+    b = 125 + n * 2
 
 
     detail = tex_noise(
-        x * 2,
-        y * 2
+        x,
+        y
     )
 
-
-    r += detail // 4
-    g += detail // 4
+    r += detail // 3
+    g += detail // 3
     b += detail // 3
 
 
+    lx = (x + offset) % brick_w
+    ly = y % brick_h
 
 
-    local_x = (x + offset) % brick_w
-    local_y = y % brick_h
-
-
-    if (
-        local_x == 0 or
-        local_y == 0
-    ):
+    if lx == 0 or ly == 0:
 
         r -= 45
         g -= 45
         b -= 40
 
 
+    if ly <= 1:
+
+        r += 18
+        g += 18
+        b += 15
+
+
+        dust = tex_noise(
+            x + 500,
+            y + 500
+        )
+
+
+        if dust > 10:
+
+            r += 12
+            g += 8
+            b += 3
+
+
+        moss = tex_noise(
+            x + 800,
+            y + 800
+        )
+
+
+        if moss > 13:
+
+            r -= 35
+            g += 55
+            b -= 20
+
 
     crack = tex_noise(
-        bx + 100,
-        by + 200
+        bx + 200,
+        by + 300
     )
 
 
@@ -284,7 +298,6 @@ def M_Wall(color, x, y):
         r -= 20
         g -= 20
         b -= 25
-
 
 
     result = pr.Color(
@@ -298,7 +311,6 @@ def M_Wall(color, x, y):
     _wall_cache[key] = result
 
     return result
-
 # ==========================================
 # WOOD
 # ==========================================
