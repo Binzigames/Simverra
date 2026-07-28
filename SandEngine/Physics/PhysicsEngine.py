@@ -3,9 +3,20 @@
 
 from SandEngine.Libs import *
 from SandEngine.DATA.GameConfig import *
+from SandEngine.Visuals.Particles import *
 
 
 
+NEIGHBORS = (
+    (-1,-1),
+    (0,-1),
+    (1,-1),
+    (-1,0),
+    (1,0),
+    (-1,1),
+    (0,1),
+    (1,1)
+)
 def mark_dirty(x, y):
     if 0 <= x < MAP_W and 0 <= y < MAP_H:
         dirty_cells.add((x, y))
@@ -20,6 +31,21 @@ def get_dirty_cells():
 
     return result
 
+def set_cell(world, x, y, material):
+
+    if not inside(x,y):
+        return
+
+    if world[y][x] == material:
+        return
+
+    world[y][x] = material
+
+    mark_dirty(x,y)
+    add_neighbors(x,y)
+
+    if material != AIR:
+        activate(x,y)
 
 
 # ===== MATERIAL REACTIONS =====
@@ -45,6 +71,10 @@ def grow_tree(world, x, y):
             if world[ny][nx] == AIR:
 
                 world[ny][nx] = WOOD
+                tree_growth_particles(
+                    nx * PIXEL_SIZE,
+                    ny * PIXEL_SIZE
+                )
 
                 mark_dirty(nx,ny)
                 activate(nx,ny)
@@ -95,6 +125,10 @@ def react_materials(world, x, y):
                     activate(x,y)
 
                     grow_tree(world,x,y)
+                    magic_particles(
+                        x * PIXEL_SIZE,
+                        y * PIXEL_SIZE
+                    )
 
                     return True
 
@@ -130,6 +164,16 @@ def react_materials(world, x, y):
 
                 mark_dirty(x,y)
                 mark_dirty(nx,ny)
+
+                gas_particles(
+                    x * PIXEL_SIZE,
+                    y * PIXEL_SIZE
+                )
+
+                gas_particles(
+                    nx * PIXEL_SIZE,
+                    ny * PIXEL_SIZE
+                )
 
                 activate(x,y)
                 activate(nx,ny)
@@ -267,6 +311,16 @@ def react_materials(world, x, y):
                 if random.random() < 0.05:
 
                     world[y][x] = SOIL
+                    reaction_particles(
+                        x * PIXEL_SIZE,
+                        y * PIXEL_SIZE,
+                        pr.Color(
+                            120,
+                            90,
+                            40,
+                            180
+                        )
+                    )
 
                     mark_dirty(x,y)
                     activate(x,y)
@@ -319,18 +373,23 @@ def inside(x,y):
     )
 
 
-def move_cell(world, x1, y1, x2, y2):
+def move_cell(world,x1,y1,x2,y2):
 
     material = world[y1][x1]
 
     world[y2][x2] = material
     world[y1][x1] = AIR
 
-    dirty_cells.add((x1, y1))
-    dirty_cells.add((x2, y2))
 
-    add_neighbors(x1, y1)
-    add_neighbors(x2, y2)
+    mark_dirty(x1,y1)
+    mark_dirty(x2,y2)
+
+
+    add_neighbors(x1,y1)
+    add_neighbors(x2,y2)
+
+
+    activate(x2,y2)
 
 
 
@@ -417,43 +476,50 @@ def update_sand(world,x,y):
 
 # ===== WATER =====
 
-def update_water(world, x, y):
+def update_water(world,x,y):
 
-    if not inside(x, y):
+    if not inside(x,y):
         return
 
     if world[y][x] != WATER:
         return
 
-    react_materials(world, x, y)
+
+    react_materials(world,x,y)
+
 
     if world[y][x] != WATER:
         return
 
 
-    if y + 1 < MAP_H:
 
-        if world[y+1][x] == AIR:
+    # вниз
+
+    if inside(x,y+1):
+
+        target = world[y+1][x]
+
+
+        if target == AIR:
 
             move_cell(
                 world,
-                x, y,
-                x, y+1
+                x,y,
+                x,y+1
             )
 
             return
 
 
-        if world[y+1][x] == GAS:
+        # вода важча за газ
 
-            world[y+1][x] = WATER
-            world[y][x] = GAS
+        if target == GAS:
 
-            mark_dirty(x,y)
-            mark_dirty(x,y+1)
-
-            add_neighbors(x,y)
-            add_neighbors(x,y+1)
+            swap_cells(
+                world,
+                x,y,
+                x,y+1
+            )
 
             return
 
@@ -461,11 +527,15 @@ def update_water(world, x, y):
 
     direction = -1 if random.getrandbits(1) else 1
 
-    for dx in (direction, -direction):
 
-        nx = x + dx
+    # діагональ
 
-        if inside(nx, y+1):
+    for dx in (direction,-direction):
+
+        nx=x+dx
+
+
+        if inside(nx,y+1):
 
             if world[y+1][nx] == AIR:
 
@@ -478,54 +548,35 @@ def update_water(world, x, y):
                 return
 
 
-    FLOW = 4
 
-    for dx in (direction, -direction):
+    # горизонтальна течія
 
-        for dist in range(1, FLOW + 1):
+    flow=random.randint(1,3)
 
-            nx = x + dx * dist
+
+    for dx in (direction,-direction):
+
+        for i in range(1,flow+1):
+
+            nx=x+dx*i
+
 
             if not inside(nx,y):
                 break
 
 
-            target = world[y][nx]
+            if world[y][nx] == AIR:
 
-
-            if target == AIR:
-
-                world[y][nx] = WATER
-                world[y][x] = AIR
-
-                mark_dirty(x,y)
-                mark_dirty(nx,y)
-
-                add_neighbors(x,y)
-                add_neighbors(nx,y)
+                move_cell(
+                    world,
+                    x,y,
+                    nx,y
+                )
 
                 return
-
-
-            elif target == GAS:
-
-                world[y][nx] = WATER
-                world[y][x] = GAS
-
-                mark_dirty(x,y)
-                mark_dirty(nx,y)
-
-                add_neighbors(x,y)
-                add_neighbors(nx,y)
-
-                return
-
 
             else:
                 break
-
-
-    react_materials(world,x,y)
 
 # ===== GAS =====
 
@@ -674,33 +725,80 @@ def update_gas(world, x, y):
 # ===== BOMB =====
 
 
-def explode(world, x, y):
-    for dy in range(-EXPLOSION_RADIUS, EXPLOSION_RADIUS + 1):
-        for dx in range(-EXPLOSION_RADIUS, EXPLOSION_RADIUS + 1):
+def explode(world,x,y):
 
-            nx = x + dx
-            ny = y + dy
 
-            if not inside(nx, ny):
+    explosions.append({
+
+        "x":x*PIXEL_SIZE+
+        PIXEL_SIZE//2,
+
+        "y":y*PIXEL_SIZE+
+        PIXEL_SIZE//2,
+
+        "radius":1.5,
+
+        "life":0.4,
+
+        "max_radius":
+        EXPLOSION_RADIUS*PIXEL_SIZE*2
+
+    })
+    explosion_particles(
+
+        x * PIXEL_SIZE,
+        y * PIXEL_SIZE
+
+    )
+
+
+    for dy in range(
+        -EXPLOSION_RADIUS,
+        EXPLOSION_RADIUS+1
+    ):
+
+        for dx in range(
+            -EXPLOSION_RADIUS,
+            EXPLOSION_RADIUS+1
+        ):
+
+
+            nx=x+dx
+            ny=y+dy
+
+
+            if not inside(nx,ny):
                 continue
 
-            if dx * dx + dy * dy > EXPLOSION_RADIUS ** 2:
+
+            distance = (
+                dx*dx+
+                dy*dy
+            )
+
+
+            if distance > EXPLOSION_RADIUS**2:
                 continue
 
-            if world[ny][nx] == BOMB and (nx != x or ny != y):
-                explode(world, nx, ny)
 
-            world[ny][nx] = AIR
 
-            mark_dirty(nx, ny)
-            add_neighbors(nx, ny)
-        explosions.append({
-            "x": x * PIXEL_SIZE + PIXEL_SIZE // 2,
-            "y": y * PIXEL_SIZE + PIXEL_SIZE // 2,
-            "radius": 1.5,
-            "life": 0.4,
-            "max_radius": EXPLOSION_RADIUS * PIXEL_SIZE * 2
-        })
+            if world[ny][nx]==BOMB:
+
+                if (nx,ny)!=(x,y):
+
+                    explode(
+                        world,
+                        nx,
+                        ny
+                    )
+
+
+            set_cell(
+                world,
+                nx,
+                ny,
+                AIR
+            )
 
 def update_bomb(world, x, y):
     react_materials(world, x, y)

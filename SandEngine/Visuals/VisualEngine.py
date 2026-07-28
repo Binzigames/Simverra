@@ -9,7 +9,7 @@ from SandEngine.Physics.PhysicsEngine import *
 from SandEngine.DATA.GameConfig import *
 from Assets.Assets_importer import *
 from SandEngine.Audio.AudioEngine import *
-
+from SandEngine.Visuals.Particles import update_particles
 #=====================
 #camera
 #=====================
@@ -1401,6 +1401,7 @@ def visuals_root():
         dt
     )
 
+
     update_dirty_texture()
 
     update_dynamic_materials()
@@ -1409,7 +1410,7 @@ def visuals_root():
 
 
     M_Background()
-
+    update_particles()
 
     draw_map()
 
