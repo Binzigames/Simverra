@@ -18,4 +18,7 @@ def init_apis():
     )
 
 def terminate_apis():
-    RPC.connect()
+    try:
+        RPC.close()
+    except Exception:
+        pass

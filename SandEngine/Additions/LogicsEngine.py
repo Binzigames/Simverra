@@ -162,8 +162,8 @@ def handle_ui_buttons():
 
     global opened_group
 
-    sw = pr.get_screen_width()
-    sh = pr.get_screen_height()
+    sw = w_x
+    sh = w_y
 
     margin = 20
     gap = 8
