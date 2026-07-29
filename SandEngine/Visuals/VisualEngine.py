@@ -1139,47 +1139,47 @@ def draw_ui():
     # TOOLBAR
     # ==========================
 
-    Button(
-        pr.Rectangle(
-            20,
-            120,
-            180,
-            40
-        ),
-        "Object Mode",
-        toggle_object_mode
-    )
+    #Button(
+        #pr.Rectangle(
+            #20,
+            #120,
+            #180,
+            #40
+        #),
+        #"Object Mode",
+        #toggle_object_mode
+    #)
 
     # ==========================
     # OBJECT PANEL
     # ==========================
 
-    if object_menu:
-        draw_object_mode_panel()
+    #if object_menu:
+        #draw_object_mode_panel()
 
     # ==========================
     # PREVIEW
     # ==========================
 
-    if object_mode:
+    #if object_mode:
 
-        draw_preview(world_mouse)
+        #draw_preview(world_mouse)
 
-        data = OBJECTS[selected_object]
+        #data = OBJECTS[selected_object]
 
-        if pr.is_mouse_button_pressed(
-                pr.MouseButton.MOUSE_BUTTON_MIDDLE):
+        #if pr.is_mouse_button_pressed(
+                #pr.MouseButton.MOUSE_BUTTON_MIDDLE):
 
-            obj = GameObject(
-                world_mouse.x,
-                world_mouse.y,
-                data["size"][0],
-                data["size"][1],
-                data["color"]
-            )
+            #obj = GameObject(
+                #world_mouse.x,
+                #world_mouse.y,
+                #data["size"][0],
+                #data["size"][1],
+                #data["color"]
+            #)
 
-            objects.append(obj)
-            play_sound(1)
+            #objects.append(obj)
+            #play_sound(1)
 
     # ==========================
     # DEBUG TOGGLE
@@ -1273,14 +1273,14 @@ def visuals_root():
     global camera
 
 
-    dt = pr.get_frame_time()
+    #dt = pr.get_frame_time()
 
     BeginFrame()
 
-    update_objects(
-        world,
-        dt
-    )
+    #update_objects(
+        #world,
+        #dt
+    #)
 
 
     update_dirty_texture()
@@ -1295,7 +1295,7 @@ def visuals_root():
 
     draw_map()
 
-    draw_objects()
+    #draw_objects()
 
 
     draw_ui()

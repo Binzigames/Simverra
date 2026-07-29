@@ -84,47 +84,45 @@ def grow_tree(world, x, y):
 
     return False
 
+SIDE_NEIGHBORS = (
+    (0, -1),
+    (-1, 0),
+    (1, 0),
+    (0, 1),
+)
+
 def react_materials(world, x, y):
 
-    if not inside(x, y):
-        return False
+    row = world[y]
+    tile = row[x]
 
+    rand = random.randrange
 
-    tile = world[y][x]
+    for dx, dy in SIDE_NEIGHBORS:
 
+        nx = x + dx
+        ny = y + dy
 
-    for dy in (-1,0,1):
-        for dx in (-1,0,1):
+        if not (0 <= nx < MAP_W and 0 <= ny < MAP_H):
+            continue
 
-            if dx == 0 and dy == 0:
-                continue
+        other = world[ny][nx]
 
+        # =========================
+        # WATER + WOOD -> GROW
+        # =========================
+        if tile == WATER:
 
-            nx = x + dx
-            ny = y + dy
+            if other == WOOD:
 
+                if rand(100) < 8:
 
-            if not inside(nx,ny):
-                continue
+                    row[x] = WOOD
 
+                    mark_dirty(x, y)
+                    activate(x, y)
 
-            other = world[ny][nx]
-
-
-            # =========================
-            # WATER + WOOD -> GROW
-            # =========================
-
-            if tile == WATER and other == WOOD:
-
-                if random.random() < 0.08:
-
-                    world[y][x] = WOOD
-
-                    mark_dirty(x,y)
-                    activate(x,y)
-
-                    grow_tree(world,x,y)
+                    grow_tree(world, x, y)
                     magic_particles(
                         x * PIXEL_SIZE,
                         y * PIXEL_SIZE
@@ -132,185 +130,60 @@ def react_materials(world, x, y):
 
                     return True
 
+            elif other == FIRE:
 
-
-            # =========================
-            # SAND + WOOD -> FIRE
-            # =========================
-
-            if tile in (SAND,GRAVIY) and other == WOOD:
-
-                if random.random() < 0.01:
-
-                    world[ny][nx] = FIRE
-
-                    fire_life[(nx,ny)] = random.randint(8,15)
-
-                    mark_dirty(nx,ny)
-                    activate(nx,ny)
-
-                    return True
-
-
-
-            # =========================
-            # FIRE + WATER -> GAS
-            # =========================
-
-            if tile == FIRE and other == WATER:
-
-                world[y][x] = GAS
+                row[x] = GAS
                 world[ny][nx] = GAS
 
-                mark_dirty(x,y)
-                mark_dirty(nx,ny)
+                fire_life.pop((nx, ny), None)
 
-                gas_particles(
-                    x * PIXEL_SIZE,
-                    y * PIXEL_SIZE
-                )
+                mark_dirty(x, y)
+                mark_dirty(nx, ny)
 
-                gas_particles(
-                    nx * PIXEL_SIZE,
-                    ny * PIXEL_SIZE
-                )
-
-                activate(x,y)
-                activate(nx,ny)
+                activate(x, y)
+                activate(nx, ny)
 
                 return True
 
+            elif other == SOIL:
 
+                if rand(100) < 2:
 
-            # =========================
-            # WATER + FIRE -> GAS
-            # =========================
+                    row[x] = SOIL
 
-            if tile == WATER and other == FIRE:
-
-                world[y][x] = GAS
-                world[ny][nx] = GAS
-
-                fire_life.pop((nx,ny),None)
-
-                mark_dirty(x,y)
-                mark_dirty(nx,ny)
-
-                activate(x,y)
-                activate(nx,ny)
-
-                return True
-
-
-
-            # =========================
-            # GAS + STONE / WOOD -> WATER
-            # =========================
-
-            if tile == GAS and other in (STONE,WOOD):
-
-                if random.random() < 0.15:
-
-                    world[y][x] = WATER
-
-                    mark_dirty(x,y)
-                    activate(x,y)
+                    mark_dirty(x, y)
+                    activate(x, y)
 
                     return True
 
+            elif other == STONE:
 
+                activate(nx, ny)
 
-            # =========================
-            # WATER + STONE
-            # =========================
+        # =========================
+        # SAND / GRAVIY
+        # =========================
+        elif tile == SAND or tile == GRAVIY:
 
-            if tile == WATER and other == STONE:
+            if other == WOOD:
 
-                activate(nx,ny)
-
-
-
-            # =========================
-            # FIRE + GRAVIY -> AIR
-            # =========================
-
-            if tile == FIRE and other == GRAVIY:
-
-                if random.random() < 0.08:
-
-                    world[y][x] = AIR
-
-                    fire_life.pop((x,y),None)
-
-                    mark_dirty(x,y)
-                    activate(x,y)
-
-                    return True
-
-
-
-            # =========================
-            # FIRE + WOOD -> FIRE
-            # =========================
-
-            if tile == FIRE and other == WOOD:
-
-                if random.random() < 0.08:
+                if rand(100) < 1:
 
                     world[ny][nx] = FIRE
 
-                    fire_life[(nx,ny)] = random.randint(10,20)
+                    fire_life[(nx, ny)] = random.randint(8, 15)
 
-                    mark_dirty(nx,ny)
-                    activate(nx,ny)
-
-                    return True
-
-
-
-            # =========================
-            # WOOD + SOIL -> WATER
-            # =========================
-
-            if tile == WOOD and other == SOIL:
-
-                if random.random() < 0.01:
-
-                    world[y][x] = WATER
-
-                    mark_dirty(x,y)
-                    activate(x,y)
+                    mark_dirty(nx, ny)
+                    activate(nx, ny)
 
                     return True
 
+            elif tile == SAND and other == WATER:
 
+                if rand(100) < 5:
 
-            # =========================
-            # WATER + SOIL -> SOIL
-            # =========================
+                    row[x] = SOIL
 
-            if tile == WATER and other == SOIL:
-
-                if random.random() < 0.02:
-
-                    world[y][x] = SOIL
-
-                    mark_dirty(x,y)
-                    activate(x,y)
-
-                    return True
-
-
-
-            # =========================
-            # SAND + WATER -> SOIL
-            # =========================
-
-            if tile == SAND and other == WATER:
-
-                if random.random() < 0.05:
-
-                    world[y][x] = SOIL
                     reaction_particles(
                         x * PIXEL_SIZE,
                         y * PIXEL_SIZE,
@@ -322,12 +195,89 @@ def react_materials(world, x, y):
                         )
                     )
 
-                    mark_dirty(x,y)
-                    activate(x,y)
+                    mark_dirty(x, y)
+                    activate(x, y)
 
                     return True
 
+        # =========================
+        # FIRE
+        # =========================
+        elif tile == FIRE:
 
+            if other == WATER:
+
+                row[x] = GAS
+                world[ny][nx] = GAS
+
+                fire_life.pop((x, y), None)
+                fire_life.pop((nx, ny), None)
+
+                mark_dirty(x, y)
+                mark_dirty(nx, ny)
+
+                activate(x, y)
+                activate(nx, ny)
+
+                return True
+
+            elif other == GRAVIY:
+
+                if rand(100) < 8:
+
+                    row[x] = AIR
+
+                    fire_life.pop((x, y), None)
+
+                    mark_dirty(x, y)
+                    activate(x, y)
+
+                    return True
+
+            elif other == WOOD:
+
+                if rand(100) < 8:
+
+                    world[ny][nx] = FIRE
+
+                    fire_life[(nx, ny)] = random.randint(10, 20)
+
+                    mark_dirty(nx, ny)
+                    activate(nx, ny)
+
+                    return True
+
+        # =========================
+        # GAS
+        # =========================
+        elif tile == GAS:
+
+            if other == STONE or other == WOOD:
+
+                if rand(100) < 15:
+
+                    row[x] = WATER
+
+                    mark_dirty(x, y)
+                    activate(x, y)
+
+                    return True
+
+        # =========================
+        # WOOD
+        # =========================
+        elif tile == WOOD:
+
+            if other == SOIL:
+
+                if rand(100) < 1:
+
+                    row[x] = WATER
+
+                    mark_dirty(x, y)
+                    activate(x, y)
+
+                    return True
 
     return False
 
@@ -953,60 +903,49 @@ def update_black_hole(world, x, y):
                     )
     react_materials(world, x, y)
 # ===== MAIN UPDATE =====
+UPDATE_FUNCS = {
+    SAND: update_sand,
+    GRAVIY: update_sand,
+    SOIL: update_sand,
+    WATER: update_water,
+    GAS: update_gas,
+    FIRE: update_fire,
+    BOMB: update_bomb,
+    BLACK_HOLE: update_black_hole,
+}
 def update_materials(world):
 
     global active_cells, next_active
 
+    active_cells, next_active = next_active, active_cells
+    next_active.clear()
 
-    active_cells, next_active = next_active, set()
+    updates = 0
 
+    for x, y in active_cells:
 
-    count = 0
+        func = UPDATE_FUNCS.get(world[y][x])
 
-    for x,y in active_cells:
+        if func is not None:
+            func(world, x, y)
 
-        tile = world[y][x]
-
-
-        if tile == SAND or tile == GRAVIY or tile == SOIL:
-
-            update_sand(world,x,y)
-
-
-        elif tile == WATER:
-
-            update_water(world,x,y)
-
-
-        elif tile == GAS:
-
-            update_gas(world,x,y)
-
-
-        elif tile == FIRE:
-
-            update_fire(world,x,y)
-
-
-        elif tile == BOMB:
-
-            update_bomb(world,x,y)
-
-
-        elif tile == BLACK_HOLE:
-
-            update_black_hole(world,x,y)
-
-
-        count += 1
-
-
-        if count >= MAX_MATERIAL_UPDATES:
-            break
-
+            updates += 1
+            if updates >= MAX_MATERIAL_UPDATES:
+                break
 
 
 # ===== INITIALIZE MATERIAL =====
+ACTIVE_TILES = {
+    SAND,
+    WATER,
+    GRAVIY,
+    BOMB,
+    SOIL,
+    GAS,
+    FIRE,
+    BLACK_HOLE,
+    WOOD,
+}
 
 def activate_world(world):
 
@@ -1016,20 +955,9 @@ def activate_world(world):
     next_active.clear()
     dirty_cells.clear()
 
+    add = next_active.add
 
-    for y,row in enumerate(world):
-
-        for x,tile in enumerate(row):
-
-            if tile in (
-                SAND,
-                WATER,
-                GRAVIY,
-                BOMB,
-                SOIL,
-                GAS,
-                FIRE,
-                BLACK_HOLE,
-                WOOD
-            ):
-                next_active.add((x,y))
+    for y, row in enumerate(world):
+        for x, tile in enumerate(row):
+            if tile in ACTIVE_TILES:
+                add((x, y))

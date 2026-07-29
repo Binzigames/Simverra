@@ -115,7 +115,7 @@ def reset_map():
     world = load_map_return()
     activate_world(world)
     create_map_texture()
-    clear_all_objects()
+    #clear_all_objects()
 def open_wiki():
     webbrowser.open(
         "https://github.com/Binzigames/Simverra/wiki"
