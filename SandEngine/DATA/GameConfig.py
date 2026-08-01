@@ -144,7 +144,7 @@ EXPLOSION_RADIUS = 15
 dirty_cells = set()
 
 # optimization
-MAX_MATERIAL_UPDATES = 12000
+MAX_MATERIAL_UPDATES = 1200
 
 #=====================
 #OBJECTS
